@@ -56,11 +56,17 @@ void Chip8::executeOpcode(uint16_t opcode) {
             break;
         case 0x6000: { //0x6XNN only has one opcode - set VX to NN
             uint8_t X = (opcode & 0x0F00) >> 8; //Extract X
-            uint8_t NN = opcode & 0x00FF;
+            uint8_t NN = opcode & 0x00FF; //Extract NN
             V[X] = NN;
-            std::cout << "Executed: Set V" << (int)X << " = " << std::hex << (int)NN << std::endl;
+            std::cout << "Executed: Set V" << std::dec << int(X) << " = 0x" << std::hex << std::setw(2) << std::setfill('0') << int(NN) << std::endl;
             break;
-
+        }
+        case 0x7000: { //0x7XNN - Add NN to VX
+            uint8_t X = (opcode & 0x0F00) >> 8; //Extract X
+            uint8_t NN = opcode & 0x00FF;
+            V[X] += NN; //Add NN to VX (no carry flag modification)
+            std::cout << "Executed: V" << std::dec << int(X) << " += 0x" << std::hex << std::setw(2) << std::setfill('0') << int(NN) << " (New V" << std::dec << int(X) << " = 0x" << std::uppercase << std::hex << std::setw(2) << std::setfill('0') << int(V[X]) << ")" << std::endl;
+            break;
         }
         default:
             std::cout << "Unknown opcode: 0x" << std::hex << opcode << std::endl;
