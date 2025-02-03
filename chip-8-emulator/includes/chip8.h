@@ -13,6 +13,8 @@ class Chip8 {
     private:
         std::array<uint8_t, 4096> memory{}; //4kb RAM
         uint16_t PC; //program counter
+        std::array<uint8_t, 64 * 32> display{};
+        void executeOpcode(uint16_t opcode);
 };
 
 #endif

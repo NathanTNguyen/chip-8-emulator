@@ -40,6 +40,19 @@ void Chip8::emulateCycle() {
     //print the fetched opcode
     std::cout << "Fetched opcode: 0x" << std::hex << std::setw(4) << std::setfill('0') << opcode << std::endl;
 
+    executeOpcode(opcode);
+
     //move to next instrucion/opcode
     PC += 2;
+}
+
+void Chip8::executeOpcode(uint16_t opcode) {
+    switch (opcode) {
+        case 0x00E0: //clear screen opcode
+            display.fill(0); //set all pixels to 0 (off)
+            std::cout << "Executed: Clear Screen (0x00E0)" << std::endl;
+            break;
+        default:
+            std::cout << "Unknown opcode: 0x" << std::hex << opcode << std::endl;
+    }
 }
