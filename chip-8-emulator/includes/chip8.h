@@ -13,9 +13,11 @@ class Chip8 {
     private:
         std::array<uint8_t, 4096> memory{}; //4kb RAM
         uint16_t PC; //program counter
+        uint16_t I; //index register (for storing memory addresses)
         std::array<uint8_t, 64 * 32> display{};
         std::array<uint8_t, 16> V{}; //chip-8 has 16 registers (V0 through to VF)
         void executeOpcode(uint16_t opcode);
+        void render();
 };
 
 #endif

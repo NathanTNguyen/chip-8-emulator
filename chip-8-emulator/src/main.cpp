@@ -9,7 +9,7 @@ int main()
     Chip8 chip8;
     chip8.loadROM("roms/ibm-logo.ch8");
 
-    for (int i = 0; i < 10; i++) {
+    for (int i = 0; i < 40; i++) {
         chip8.emulateCycle();
     }
 
