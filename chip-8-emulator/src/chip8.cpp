@@ -47,11 +47,21 @@ void Chip8::emulateCycle() {
 }
 
 void Chip8::executeOpcode(uint16_t opcode) {
-    switch (opcode) {
-        case 0x00E0: //clear screen opcode
-            display.fill(0); //set all pixels to 0 (off)
-            std::cout << "Executed: Clear Screen (0x00E0)" << std::endl;
+    switch (opcode & 0xF000) { //extracts the first hex (for switch case)
+        case 0x0000: //0 instruction
+            if (opcode == 0x00E0) {
+                display.fill(0); //set all pixels to 0 (off)
+                std::cout << "Executed: Clear Screen (0x00E0)" << std::endl;
+            }
             break;
+        case 0x6000: { //0x6XNN only has one opcode - set VX to NN
+            uint8_t X = (opcode & 0x0F00) >> 8; //Extract X
+            uint8_t NN = opcode & 0x00FF;
+            V[X] = NN;
+            std::cout << "Executed: Set V" << (int)X << " = " << std::hex << (int)NN << std::endl;
+            break;
+
+        }
         default:
             std::cout << "Unknown opcode: 0x" << std::hex << opcode << std::endl;
     }
