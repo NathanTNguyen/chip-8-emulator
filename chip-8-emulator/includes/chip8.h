@@ -8,6 +8,7 @@ class Chip8 {
     public:
         Chip8(); //the constructor
         void loadROM(const char* filename); //loads ROM into memory
+        void emulateCycle(); //fetch, decode and execute an opcode/instruction
 
     private:
         std::array<uint8_t, 4096> memory{}; //4kb RAM

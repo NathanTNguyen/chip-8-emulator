@@ -2,6 +2,7 @@
 #include <iostream>
 #include <fstream>
 #include <vector>
+#include <iomanip>
 
 Chip8::Chip8() {
     PC = 0x200; //programs start at memory address 0x200
@@ -30,4 +31,15 @@ void Chip8::loadROM(const char* filename) {
         }
         std::cout << "Loaded ROM " << filename << " successfully" << std::endl;
     }
+}
+
+void Chip8::emulateCycle() {
+    //fetch opcode (2 bytes)
+    uint16_t opcode = memory[PC] << 8 | memory[PC+1]; //left shift our initial byte of info (by 8 bits) to convert to 16 bit format, then combine both together to form full opcode (2 bytes)
+
+    //print the fetched opcode
+    std::cout << "Fetched opcode: 0x" << std::hex << std::setw(4) << std::setfill('0') << opcode << std::endl;
+
+    //move to next instrucion/opcode
+    PC += 2;
 }
