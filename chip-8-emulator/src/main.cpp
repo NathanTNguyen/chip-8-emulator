@@ -1,17 +1,22 @@
 #include <iostream>
 #include <cstdint>
 #include "../includes/chip8.h"
+#include <emscripten.h>
 
-int main()
-{
-    std::cout << "CHIP-8 Emulator..." << std::endl;
+Chip8 chip8;
 
-    Chip8 chip8;
-    chip8.loadROM("roms/ibm-logo.ch8");
 
-    for (int i = 0; i < 40; i++) {
+extern "C" { // Expose to JS
+    EMSCRIPTEN_KEEPALIVE void loadROM(uint8_t* data, size_t size) {
+        chip8.loadROM(data, size);
+    }
+
+    EMSCRIPTEN_KEEPALIVE void emulateCycle() {
         chip8.emulateCycle();
     }
 
-    return 0;
+    EMSCRIPTEN_KEEPALIVE uint8_t* getDisplay() {
+        std::cout << "getDisplay() called!" << std::endl;
+        return chip8.getDisplayBuffer();
+    }
 }

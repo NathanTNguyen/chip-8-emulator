@@ -8,44 +8,31 @@ Chip8::Chip8() {
     PC = 0x200; //programs start at memory address 0x200
 }
 
-void Chip8::loadROM(const char* filename) {
-    std::ifstream file(filename, std::ios::binary | std::ios::ate); //open file
-
-    if (!file) {
-        std::cerr << "Failed to open ROM file: " << filename << std::endl;
-        return;
-    }
-
-    std::streamsize size = file.tellg();
-    file.seekg(0, std::ios::beg);
-
+void Chip8::loadROM(const uint8_t* romData, size_t size) {
     if (size > 3584) {
         std::cerr << "ROM is too large!!" << std::endl;
         return;
     }
 
-    std::vector<uint8_t> buffer(size);
-    if (file.read(reinterpret_cast<char*>(buffer.data()), size)) {
-        for (size_t i = 0; i < buffer.size(); i++) {
-            memory[0x200 + i] = buffer[i];
-        }
-        std::cout << "Loaded ROM " << filename << " successfully" << std::endl;
+    for (size_t i = 0; i < size; i++) {
+        memory[0x200 + i] = romData[i]; // Load ROM into memory starting at 0x200
     }
+    std::cout << "Loaded ROM successfully (" << size << " bytes)" << std::endl;
 }
 
 void Chip8::emulateCycle() {
-    //fetch opcode (2 bytes)
-    uint16_t opcode = memory[PC] << 8 | memory[PC+1]; //left shift our initial byte of info (by 8 bits) to convert to 16 bit format, then combine both together to form full opcode (2 bytes)
-
-    //print the fetched opcode
+    uint16_t opcode = memory[PC] << 8 | memory[PC + 1];
     std::cout << "Fetched opcode: 0x" << std::hex << std::setw(4) << std::setfill('0') << opcode << std::endl;
 
     executeOpcode(opcode);
-
-    //move to next instrucion/opcode
     PC += 2;
 
-    render();
+    // Add debug output
+    std::cout << "First 10 pixels in display buffer: ";
+    for (int i = 0; i < 10; i++) {
+        std::cout << (int)display[i] << " ";
+    }
+    std::cout << std::endl;
 }
 
 void Chip8::executeOpcode(uint16_t opcode) {
@@ -110,12 +97,6 @@ void Chip8::executeOpcode(uint16_t opcode) {
     }
 }
 
-void Chip8::render() {
-    std::cout << "\nCHIP-8 Display:\n";
-    for (int y = 0; y < 32; y++) {
-        for (int x = 0; x < 64; x++) {
-            std::cout << (display[y * 64 + x] ? "#" : " ");  // Print filled or empty space
-        }
-        std::cout << "\n";
-    }
+uint8_t* Chip8::getDisplayBuffer() {
+    return display.data(); //return pointer to display array
 }

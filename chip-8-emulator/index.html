@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>CHIP-8 Emulator</title>
+  <script src="chip8.js"></script>
+  <style>
+    /* Ensure the canvas remains pixelated when scaled */
+    canvas {
+      image-rendering: pixelated;
+      image-rendering: crisp-edges;
+    }
+  </style>
+</head>
+<body>
+  <h1>CHIP-8 Emulator</h1>
+  <!-- The canvas size here determines the final display size -->
+  <canvas id="chip8Canvas" width="640" height="320"></canvas>
+  <input type="file" id="romUploader">
+  <button onclick="startEmulator()">Start</button>
+  <button onclick="stopEmulator()">Stop</button>
+
+  <script>
+    let running = false;           // Global flag to control execution
+    let animationFrameId;          // Stores requestAnimationFrame ID
+    let stepTimeoutId;             // Stores setTimeout ID
+
+    Module.onRuntimeInitialized = function() {
+      console.log("WASM Loaded!");
+
+      window.startEmulator = function() {
+        if (running) return; // Prevent multiple starts
+
+        console.log("Emulator started!");
+        running = true;
+
+        function render() {
+          if (!running) return; // Stop rendering if emulator is stopped
+
+          // Get display data from WASM module.
+          let displayBuffer = Module._getDisplay();
+
+          // Create an offscreen canvas for the 64x32 display.
+          let offscreenCanvas = document.createElement("canvas");
+          offscreenCanvas.width = 64;
+          offscreenCanvas.height = 32;
+          let offscreenCtx = offscreenCanvas.getContext("2d");
+          let imageData = offscreenCtx.createImageData(64, 32);
+
+          // Fill the imageData based on the display buffer.
+          for (let i = 0; i < 64 * 32; i++) {
+            let color = Module.getValue(displayBuffer + i, "i8") ? 255 : 0;
+            imageData.data[i * 4 + 0] = color; // R
+            imageData.data[i * 4 + 1] = color; // G
+            imageData.data[i * 4 + 2] = color; // B
+            imageData.data[i * 4 + 3] = 255;   // A
+          }
+
+          // Draw the raw 64x32 image on the offscreen canvas.
+          offscreenCtx.putImageData(imageData, 0, 0);
+
+          // draw the scaled-up version to the visible canvas.
+          let canvas = document.getElementById("chip8Canvas");
+          let ctx = canvas.getContext("2d");
+          ctx.imageSmoothingEnabled = false; // Disable smoothing for crisp pixels
+
+          // Clear the visible canvas if needed.
+          ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+          // Scale the offscreen canvas image to fill the visible canvas.
+          ctx.drawImage(offscreenCanvas, 0, 0, 64, 32, 0, 0, canvas.width, canvas.height);
+
+          // Request the next frame.
+          animationFrameId = requestAnimationFrame(render);
+        }
+
+        function step() {
+          if (!running) return; // Stop execution if emulator is stopped
+
+          Module._emulateCycle();
+          render();
+          stepTimeoutId = setTimeout(step, 50);
+        }
+
+        step();
+      };
+
+      window.stopEmulator = function() {
+        console.log("Emulator stopped!");
+        running = false;
+        clearTimeout(stepTimeoutId);      // Stop the emulator cycle
+        cancelAnimationFrame(animationFrameId); // Stop the rendering loop
+      };
+    };
+
+    // ROM uploader handling.
+    document.getElementById("romUploader").addEventListener("change", function(event) {
+      let file = event.target.files[0];
+
+      if (file) {
+        let reader = new FileReader();
+        reader.onload = function(e) {
+          console.log("ROM Loaded:", file.name);
+          let romData = new Uint8Array(e.target.result);
+
+          if (typeof Module._malloc === "undefined") {
+            console.error("ERROR: _malloc is undefined!");
+            return;
+          }
+
+          let ptr = Module._malloc(romData.length);
+          console.log("Allocated memory at:", ptr);
+
+          Module.HEAPU8.set(romData, ptr);
+          console.log("ROM data copied to memory!");
+
+          Module._loadROM(ptr, romData.length);
+          console.log("ROM loaded into emulator!");
+
+          Module._free(ptr);
+          console.log("Freed allocated memory.");
+        };
+        reader.readAsArrayBuffer(file);
+      }
+    });
+  </script>
+</body>
+</html>
