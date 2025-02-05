@@ -1,6 +1,5 @@
 <!-- To serve: emrun --no_browser --port 8080 . -->
-<!-- keep tailwind updated: npx tailwindcss -i ./styles.css -o ./output.css --watch-->
-
+<!-- keep tailwind updated: npx tailwindcss -i ./styles.css -o ./output.css --watch -->
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -10,46 +9,92 @@
     <script src="chip8.js"></script>
     <link href="output.css" rel="stylesheet" />
   </head>
+  <body class="min-h-screen bg-gray-900 text-white">
+    <!-- Sidebar -->
+    <div
+      class="w-64 fixed left-0 top-0 bottom-0 bg-gray-800 p-4 overflow-y-auto"
+    >
+      <h2 class="text-xl font-bold mb-4">Choose a ROM</h2>
+      <ul>
+        <li class="mb-2">
+          <button
+            onclick="loadIBMLogo()"
+            class="w-full text-left px-2 py-1 hover:bg-gray-700 rounded"
+          >
+            IBM Logo ROM
+          </button>
+        </li>
+      </ul>
+    </div>
 
-  <body class="min-h-screen bg-gray-900 text-white flex flex-col items-center justify-top pt-12">
-    <h1 class="text-3xl font-bold mb-6">CHIP-8 Emulator</h1>
+    <!-- Main Content -->
+    <div class="flex-1 flex flex-col items-center pt-12">
+      <div class="w-[844px] mx-auto">
+        <h1 class="text-3xl font-bold mb-6 text-center">CHIP-8 Emulator</h1>
 
-    <!-- Emulator Canvas -->
-    <canvas
-      id="chip8Canvas"
-      width="640"
-      height="320"
-      class="border-4 border-white bg-black image-rendering-pixelated"
-    ></canvas>
+        <div class="flex gap-4">
+          <!-- Emulator Canvas -->
+          <canvas
+            id="chip8Canvas"
+            width="640"
+            height="320"
+            class="border-4 border-white bg-black image-rendering-pixelated"
+          ></canvas>
 
-    <!-- Controls -->
-    <div class="mt-6 flex flex-col sm:flex-row items-center gap-4">
-      <input type="file" id="romUploader" class="px-3 py-2 border border-gray-300 rounded bg-gray-100 text-gray-900" />
-      <button
-        onclick="startEmulator()"
-        class="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-lg transition"
-      >
-        Start
-      </button>
-      <button
-        onclick="stopEmulator()"
-        class="bg-red-600 hover:bg-red-700 text-white font-semibold py-2 px-4 rounded-lg transition"
-      >
-        Stop
-      </button>
+          <!-- Log window -->
+          <div
+            id="logWindow"
+            class="border border-white bg-gray-800 p-2 text-xs overflow-y-auto"
+            style="width: 200px; height: 320px"
+          ></div>
+        </div>
+
+        <!-- Controls -->
+        <div class="mt-6 flex flex-col sm:flex-row items-center gap-4">
+          <input
+            type="file"
+            id="romUploader"
+            class="px-3 py-2 border border-gray-300 rounded bg-gray-100 text-gray-900"
+          />
+          <button
+            onclick="startEmulator()"
+            class="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-lg transition"
+          >
+            Start
+          </button>
+          <button
+            onclick="stopEmulator()"
+            class="bg-red-600 hover:bg-red-700 text-white font-semibold py-2 px-4 rounded-lg transition"
+          >
+            Stop
+          </button>
+        </div>
+      </div>
     </div>
 
     <script>
+      // Utility function to append messages to the log window.
+      function appendLog(message) {
+        const logWindow = document.getElementById("logWindow");
+        const logEntry = document.createElement("div");
+        logEntry.textContent = message;
+        logWindow.appendChild(logEntry);
+        // Auto-scroll to the bottom
+        logWindow.scrollTop = logWindow.scrollHeight;
+      }
+
       let running = false;
       let animationFrameId;
       let stepTimeoutId;
 
       Module.onRuntimeInitialized = function () {
         console.log("WASM Loaded!");
+        appendLog("WASM Loaded!");
 
         window.startEmulator = function () {
           if (running) return;
           console.log("Emulator started!");
+          appendLog("Emulator started!");
           running = true;
 
           function render() {
@@ -74,13 +119,33 @@
             let ctx = canvas.getContext("2d");
             ctx.imageSmoothingEnabled = false;
             ctx.clearRect(0, 0, canvas.width, canvas.height);
-            ctx.drawImage(offscreenCanvas, 0, 0, 64, 32, 0, 0, canvas.width, canvas.height);
+            ctx.drawImage(
+              offscreenCanvas,
+              0,
+              0,
+              64,
+              32,
+              0,
+              0,
+              canvas.width,
+              canvas.height
+            );
             animationFrameId = requestAnimationFrame(render);
           }
 
           function step() {
             if (!running) return;
             Module._emulateCycle();
+
+            const dummyOpcode =
+              "0x" +
+              Math.floor(Math.random() * 0xfff)
+                .toString(16)
+                .padStart(3, "0");
+            appendLog(
+              `Executed opcode: ${dummyOpcode} at ${new Date().toLocaleTimeString()}`
+            );
+
             render();
             stepTimeoutId = setTimeout(step, 200);
           }
@@ -89,33 +154,57 @@
 
         window.stopEmulator = function () {
           console.log("Emulator stopped!");
+          appendLog("Emulator stopped!");
           running = false;
           clearTimeout(stepTimeoutId);
           cancelAnimationFrame(animationFrameId);
         };
       };
 
-      document.getElementById("romUploader").addEventListener("change", function (event) {
-        let file = event.target.files[0];
-        if (file) {
-          let reader = new FileReader();
-          reader.onload = function (e) {
-            console.log("ROM Loaded:", file.name);
-            let romData = new Uint8Array(e.target.result);
+      document
+        .getElementById("romUploader")
+        .addEventListener("change", function (event) {
+          let file = event.target.files[0];
+          if (file) {
+            let reader = new FileReader();
+            reader.onload = function (e) {
+              console.log("ROM Loaded:", file.name);
+              appendLog("ROM Loaded: " + file.name);
+              let romData = new Uint8Array(e.target.result);
 
-            if (typeof Module._malloc === "undefined") {
-              console.error("ERROR: _malloc is undefined!");
-              return;
-            }
+              if (typeof Module._malloc === "undefined") {
+                console.error("ERROR: _malloc is undefined!");
+                appendLog("ERROR: _malloc is undefined!");
+                return;
+              }
 
-            let ptr = Module._malloc(romData.length);
-            Module.HEAPU8.set(romData, ptr);
-            Module._loadROM(ptr, romData.length);
-            Module._free(ptr);
-          };
-          reader.readAsArrayBuffer(file);
+              let ptr = Module._malloc(romData.length);
+              Module.HEAPU8.set(romData, ptr);
+              Module._loadROM(ptr, romData.length);
+              Module._free(ptr);
+            };
+            reader.readAsArrayBuffer(file);
+          }
+        });
+
+      async function loadIBMLogo() {
+        try {
+          const response = await fetch("roms/ibm-logo.ch8");
+          const arrayBuffer = await response.arrayBuffer();
+          const romData = new Uint8Array(arrayBuffer);
+
+          let ptr = Module._malloc(romData.length);
+          Module.HEAPU8.set(romData, ptr);
+          Module._loadROM(ptr, romData.length);
+          Module._free(ptr);
+
+          console.log("IBM Logo ROM loaded successfully");
+          appendLog("IBM Logo ROM loaded successfully");
+        } catch (error) {
+          console.error("Error loading IBM Logo ROM:", error);
+          appendLog("Error loading IBM Logo ROM: " + error);
         }
-      });
+      }
     </script>
   </body>
 </html>
