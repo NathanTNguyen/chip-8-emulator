@@ -16,7 +16,6 @@ extern "C" { // Expose to JS
     }
 
     EMSCRIPTEN_KEEPALIVE uint8_t* getDisplay() {
-        std::cout << "getDisplay() called!" << std::endl;
         return chip8.getDisplayBuffer();
     }
 

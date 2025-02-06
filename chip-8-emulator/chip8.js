@@ -31,7 +31,7 @@ if (ENVIRONMENT_IS_NODE) {
 
 // --pre-jses are emitted after the Module integration code, so that they can
 // refer to Module (if they choose; they can also define Module)
-// include: C:\Users\ALLIED~1\AppData\Local\Temp\tmpxnyuxudg.js
+// include: C:\Users\ALLIED~1\AppData\Local\Temp\tmpnx7xp_8w.js
 
   Module['expectedDataFileDownloads'] ??= 0;
   Module['expectedDataFileDownloads']++;
@@ -212,21 +212,21 @@ Module['FS_createPath']("/", "roms", true, true);
 
   })();
 
-// end include: C:\Users\ALLIED~1\AppData\Local\Temp\tmpxnyuxudg.js
-// include: C:\Users\ALLIED~1\AppData\Local\Temp\tmps8ap4kpr.js
+// end include: C:\Users\ALLIED~1\AppData\Local\Temp\tmpnx7xp_8w.js
+// include: C:\Users\ALLIED~1\AppData\Local\Temp\tmpv80l5zbc.js
 
     // All the pre-js content up to here must remain later on, we need to run
     // it.
     if (Module['$ww'] || (typeof ENVIRONMENT_IS_PTHREAD != 'undefined' && ENVIRONMENT_IS_PTHREAD)) Module['preRun'] = [];
     var necessaryPreJSTasks = Module['preRun'].slice();
-  // end include: C:\Users\ALLIED~1\AppData\Local\Temp\tmps8ap4kpr.js
-// include: C:\Users\ALLIED~1\AppData\Local\Temp\tmp8dy1ovt4.js
+  // end include: C:\Users\ALLIED~1\AppData\Local\Temp\tmpv80l5zbc.js
+// include: C:\Users\ALLIED~1\AppData\Local\Temp\tmpaw2vdyj9.js
 
     if (!Module['preRun']) throw 'Module.preRun should exist because file support used it; did a pre-js delete it?';
     necessaryPreJSTasks.forEach((task) => {
       if (Module['preRun'].indexOf(task) < 0) throw 'All preRun tasks that exist before user pre-js code should remain after; did you replace Module or modify Module.preRun?';
     });
-  // end include: C:\Users\ALLIED~1\AppData\Local\Temp\tmp8dy1ovt4.js
+  // end include: C:\Users\ALLIED~1\AppData\Local\Temp\tmpaw2vdyj9.js
 
 
 // Sometimes an existing Module object exists with properties
@@ -1038,6 +1038,21 @@ async function createWasm() {
 }
 
 // === Body ===
+
+var ASM_CONSTS = {
+  67940: () => { appendLog("Chip-8 state has been reset"); },  
+ 67986: () => { appendLog("ERROR: ROM is too large!!"); },  
+ 68030: ($0) => { appendLog("Loaded ROM successfully (" + $0.toString() + " bytes)"); },  
+ 68102: ($0) => { var hexOpcode = ("0000" + $0.toString(16)).slice(-4); appendLog("Fetched opcode: 0x" + hexOpcode); },  
+ 68205: () => { appendLog("Executed: Clear Screen (0x00E0)"); },  
+ 68255: ($0) => { var hexAddr = ("000" + $0.toString(16)).slice(-3); appendLog("Executed: Jump to address 0x" + hexAddr); },  
+ 68363: ($0, $1) => { appendLog("Executed: Set V" + $0.toString() + " = 0x" + ($1.toString(16).toUpperCase().padStart(2, "0"))); },  
+ 68474: ($0, $1, $2) => { appendLog("Executed: V" + $0.toString() + " += 0x" + ($1.toString(16).toUpperCase().padStart(2, "0")) + " (New V" + $0.toString() + " = 0x" + ($2.toString(16).toUpperCase().padStart(2, "0")) + ")"); },  
+ 68677: ($0) => { var hexI = ("000" + $0.toString(16)).slice(-3); appendLog("Executed: Set I = 0x" + hexI); },  
+ 68771: ($0, $1, $2) => { appendLog("Executed: Draw sprite at (V" + $0.toString() + ", V" + $1.toString() + ") with height " + $2.toString()); },  
+ 68892: () => { appendLog("Executed: Unknown opcode encountered."); }
+};
+
 // end include: preamble.js
 
 
@@ -1122,129 +1137,46 @@ async function createWasm() {
   var __abort_js = () =>
       abort('native code called abort()');
 
-  var stringToUTF8Array = (str, heap, outIdx, maxBytesToWrite) => {
-      assert(typeof str === 'string', `stringToUTF8Array expects a string (got ${typeof str})`);
-      // Parameter maxBytesToWrite is not optional. Negative values, 0, null,
-      // undefined and false each don't write out any bytes.
-      if (!(maxBytesToWrite > 0))
-        return 0;
-  
-      var startIdx = outIdx;
-      var endIdx = outIdx + maxBytesToWrite - 1; // -1 for string null terminator.
-      for (var i = 0; i < str.length; ++i) {
-        // Gotcha: charCodeAt returns a 16-bit word that is a UTF-16 encoded code
-        // unit, not a Unicode code point of the character! So decode
-        // UTF16->UTF32->UTF8.
-        // See http://unicode.org/faq/utf_bom.html#utf16-3
-        // For UTF8 byte structure, see http://en.wikipedia.org/wiki/UTF-8#Description
-        // and https://www.ietf.org/rfc/rfc2279.txt
-        // and https://tools.ietf.org/html/rfc3629
-        var u = str.charCodeAt(i); // possibly a lead surrogate
-        if (u >= 0xD800 && u <= 0xDFFF) {
-          var u1 = str.charCodeAt(++i);
-          u = 0x10000 + ((u & 0x3FF) << 10) | (u1 & 0x3FF);
-        }
-        if (u <= 0x7F) {
-          if (outIdx >= endIdx) break;
-          heap[outIdx++] = u;
-        } else if (u <= 0x7FF) {
-          if (outIdx + 1 >= endIdx) break;
-          heap[outIdx++] = 0xC0 | (u >> 6);
-          heap[outIdx++] = 0x80 | (u & 63);
-        } else if (u <= 0xFFFF) {
-          if (outIdx + 2 >= endIdx) break;
-          heap[outIdx++] = 0xE0 | (u >> 12);
-          heap[outIdx++] = 0x80 | ((u >> 6) & 63);
-          heap[outIdx++] = 0x80 | (u & 63);
-        } else {
-          if (outIdx + 3 >= endIdx) break;
-          if (u > 0x10FFFF) warnOnce('Invalid Unicode code point ' + ptrToString(u) + ' encountered when serializing a JS string to a UTF-8 string in wasm memory! (Valid unicode code points should be in range 0-0x10FFFF).');
-          heap[outIdx++] = 0xF0 | (u >> 18);
-          heap[outIdx++] = 0x80 | ((u >> 12) & 63);
-          heap[outIdx++] = 0x80 | ((u >> 6) & 63);
-          heap[outIdx++] = 0x80 | (u & 63);
-        }
+  var readEmAsmArgsArray = [];
+  var readEmAsmArgs = (sigPtr, buf) => {
+      // Nobody should have mutated _readEmAsmArgsArray underneath us to be something else than an array.
+      assert(Array.isArray(readEmAsmArgsArray));
+      // The input buffer is allocated on the stack, so it must be stack-aligned.
+      assert(buf % 16 == 0);
+      readEmAsmArgsArray.length = 0;
+      var ch;
+      // Most arguments are i32s, so shift the buffer pointer so it is a plain
+      // index into HEAP32.
+      while (ch = HEAPU8[sigPtr++]) {
+        var chr = String.fromCharCode(ch);
+        var validChars = ['d', 'f', 'i', 'p'];
+        // In WASM_BIGINT mode we support passing i64 values as bigint.
+        validChars.push('j');
+        assert(validChars.includes(chr), `Invalid character ${ch}("${chr}") in readEmAsmArgs! Use only [${validChars}], and do not specify "v" for void return argument.`);
+        // Floats are always passed as doubles, so all types except for 'i'
+        // are 8 bytes and require alignment.
+        var wide = (ch != 105);
+        wide &= (ch != 112);
+        buf += wide && (buf % 8) ? 4 : 0;
+        readEmAsmArgsArray.push(
+          // Special case for pointers under wasm64 or CAN_ADDRESS_2GB mode.
+          ch == 112 ? HEAPU32[((buf)>>2)] :
+          ch == 106 ? HEAP64[((buf)>>3)] :
+          ch == 105 ?
+            HEAP32[((buf)>>2)] :
+            HEAPF64[((buf)>>3)]
+        );
+        buf += wide ? 8 : 4;
       }
-      // Null-terminate the pointer to the buffer.
-      heap[outIdx] = 0;
-      return outIdx - startIdx;
+      return readEmAsmArgsArray;
     };
-  var stringToUTF8 = (str, outPtr, maxBytesToWrite) => {
-      assert(typeof maxBytesToWrite == 'number', 'stringToUTF8(str, outPtr, maxBytesToWrite) is missing the third parameter that specifies the length of the output buffer!');
-      return stringToUTF8Array(str, HEAPU8, outPtr, maxBytesToWrite);
+  var runEmAsmFunction = (code, sigPtr, argbuf) => {
+      var args = readEmAsmArgs(sigPtr, argbuf);
+      assert(ASM_CONSTS.hasOwnProperty(code), `No EM_ASM constant found at address ${code}.  The loaded WebAssembly file is likely out of sync with the generated JavaScript.`);
+      return ASM_CONSTS[code](...args);
     };
-  
-  var lengthBytesUTF8 = (str) => {
-      var len = 0;
-      for (var i = 0; i < str.length; ++i) {
-        // Gotcha: charCodeAt returns a 16-bit word that is a UTF-16 encoded code
-        // unit, not a Unicode code point of the character! So decode
-        // UTF16->UTF32->UTF8.
-        // See http://unicode.org/faq/utf_bom.html#utf16-3
-        var c = str.charCodeAt(i); // possibly a lead surrogate
-        if (c <= 0x7F) {
-          len++;
-        } else if (c <= 0x7FF) {
-          len += 2;
-        } else if (c >= 0xD800 && c <= 0xDFFF) {
-          len += 4; ++i;
-        } else {
-          len += 3;
-        }
-      }
-      return len;
-    };
-  var __tzset_js = (timezone, daylight, std_name, dst_name) => {
-      // TODO: Use (malleable) environment variables instead of system settings.
-      var currentYear = new Date().getFullYear();
-      var winter = new Date(currentYear, 0, 1);
-      var summer = new Date(currentYear, 6, 1);
-      var winterOffset = winter.getTimezoneOffset();
-      var summerOffset = summer.getTimezoneOffset();
-  
-      // Local standard timezone offset. Local standard time is not adjusted for
-      // daylight savings.  This code uses the fact that getTimezoneOffset returns
-      // a greater value during Standard Time versus Daylight Saving Time (DST).
-      // Thus it determines the expected output during Standard Time, and it
-      // compares whether the output of the given date the same (Standard) or less
-      // (DST).
-      var stdTimezoneOffset = Math.max(winterOffset, summerOffset);
-  
-      // timezone is specified as seconds west of UTC ("The external variable
-      // `timezone` shall be set to the difference, in seconds, between
-      // Coordinated Universal Time (UTC) and local standard time."), the same
-      // as returned by stdTimezoneOffset.
-      // See http://pubs.opengroup.org/onlinepubs/009695399/functions/tzset.html
-      HEAPU32[((timezone)>>2)] = stdTimezoneOffset * 60;
-  
-      HEAP32[((daylight)>>2)] = Number(winterOffset != summerOffset);
-  
-      var extractZone = (timezoneOffset) => {
-        // Why inverse sign?
-        // Read here https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/getTimezoneOffset
-        var sign = timezoneOffset >= 0 ? "-" : "+";
-  
-        var absOffset = Math.abs(timezoneOffset)
-        var hours = String(Math.floor(absOffset / 60)).padStart(2, "0");
-        var minutes = String(absOffset % 60).padStart(2, "0");
-  
-        return `UTC${sign}${hours}${minutes}`;
-      }
-  
-      var winterName = extractZone(winterOffset);
-      var summerName = extractZone(summerOffset);
-      assert(winterName);
-      assert(summerName);
-      assert(lengthBytesUTF8(winterName) <= 16, `timezone name truncated to fit in TZNAME_MAX (${winterName})`);
-      assert(lengthBytesUTF8(summerName) <= 16, `timezone name truncated to fit in TZNAME_MAX (${summerName})`);
-      if (summerOffset < winterOffset) {
-        // Northern hemisphere
-        stringToUTF8(winterName, std_name, 17);
-        stringToUTF8(summerName, dst_name, 17);
-      } else {
-        stringToUTF8(winterName, dst_name, 17);
-        stringToUTF8(summerName, std_name, 17);
-      }
+  var _emscripten_asm_const_int = (code, sigPtr, argbuf) => {
+      return runEmAsmFunction(code, sigPtr, argbuf);
     };
 
   var getHeapMax = () =>
@@ -1263,69 +1195,6 @@ async function createWasm() {
       // With CAN_ADDRESS_2GB or MEMORY64, pointers are already unsigned.
       requestedSize >>>= 0;
       abortOnCannotGrowMemory(requestedSize);
-    };
-
-  var ENV = {
-  };
-  
-  var getExecutableName = () => thisProgram || './this.program';
-  var getEnvStrings = () => {
-      if (!getEnvStrings.strings) {
-        // Default values.
-        // Browser language detection #8751
-        var lang = ((typeof navigator == 'object' && navigator.languages && navigator.languages[0]) || 'C').replace('-', '_') + '.UTF-8';
-        var env = {
-          'USER': 'web_user',
-          'LOGNAME': 'web_user',
-          'PATH': '/',
-          'PWD': '/',
-          'HOME': '/home/web_user',
-          'LANG': lang,
-          '_': getExecutableName()
-        };
-        // Apply the user-provided values, if any.
-        for (var x in ENV) {
-          // x is a key in ENV; if ENV[x] is undefined, that means it was
-          // explicitly set to be so. We allow user code to do that to
-          // force variables with default values to remain unset.
-          if (ENV[x] === undefined) delete env[x];
-          else env[x] = ENV[x];
-        }
-        var strings = [];
-        for (var x in env) {
-          strings.push(`${x}=${env[x]}`);
-        }
-        getEnvStrings.strings = strings;
-      }
-      return getEnvStrings.strings;
-    };
-  
-  var stringToAscii = (str, buffer) => {
-      for (var i = 0; i < str.length; ++i) {
-        assert(str.charCodeAt(i) === (str.charCodeAt(i) & 0xff));
-        HEAP8[buffer++] = str.charCodeAt(i);
-      }
-      // Null-terminate the string
-      HEAP8[buffer] = 0;
-    };
-  var _environ_get = (__environ, environ_buf) => {
-      var bufSize = 0;
-      getEnvStrings().forEach((string, i) => {
-        var ptr = environ_buf + bufSize;
-        HEAPU32[(((__environ)+(i*4))>>2)] = ptr;
-        stringToAscii(string, ptr);
-        bufSize += string.length + 1;
-      });
-      return 0;
-    };
-
-  var _environ_sizes_get = (penviron_count, penviron_buf_size) => {
-      var strings = getEnvStrings();
-      HEAPU32[((penviron_count)>>2)] = strings.length;
-      var bufSize = 0;
-      strings.forEach((string) => bufSize += string.length + 1);
-      HEAPU32[((penviron_buf_size)>>2)] = bufSize;
-      return 0;
     };
 
   var PATH = {
@@ -1516,7 +1385,74 @@ async function createWasm() {
   
   var FS_stdin_getChar_buffer = [];
   
+  var lengthBytesUTF8 = (str) => {
+      var len = 0;
+      for (var i = 0; i < str.length; ++i) {
+        // Gotcha: charCodeAt returns a 16-bit word that is a UTF-16 encoded code
+        // unit, not a Unicode code point of the character! So decode
+        // UTF16->UTF32->UTF8.
+        // See http://unicode.org/faq/utf_bom.html#utf16-3
+        var c = str.charCodeAt(i); // possibly a lead surrogate
+        if (c <= 0x7F) {
+          len++;
+        } else if (c <= 0x7FF) {
+          len += 2;
+        } else if (c >= 0xD800 && c <= 0xDFFF) {
+          len += 4; ++i;
+        } else {
+          len += 3;
+        }
+      }
+      return len;
+    };
   
+  var stringToUTF8Array = (str, heap, outIdx, maxBytesToWrite) => {
+      assert(typeof str === 'string', `stringToUTF8Array expects a string (got ${typeof str})`);
+      // Parameter maxBytesToWrite is not optional. Negative values, 0, null,
+      // undefined and false each don't write out any bytes.
+      if (!(maxBytesToWrite > 0))
+        return 0;
+  
+      var startIdx = outIdx;
+      var endIdx = outIdx + maxBytesToWrite - 1; // -1 for string null terminator.
+      for (var i = 0; i < str.length; ++i) {
+        // Gotcha: charCodeAt returns a 16-bit word that is a UTF-16 encoded code
+        // unit, not a Unicode code point of the character! So decode
+        // UTF16->UTF32->UTF8.
+        // See http://unicode.org/faq/utf_bom.html#utf16-3
+        // For UTF8 byte structure, see http://en.wikipedia.org/wiki/UTF-8#Description
+        // and https://www.ietf.org/rfc/rfc2279.txt
+        // and https://tools.ietf.org/html/rfc3629
+        var u = str.charCodeAt(i); // possibly a lead surrogate
+        if (u >= 0xD800 && u <= 0xDFFF) {
+          var u1 = str.charCodeAt(++i);
+          u = 0x10000 + ((u & 0x3FF) << 10) | (u1 & 0x3FF);
+        }
+        if (u <= 0x7F) {
+          if (outIdx >= endIdx) break;
+          heap[outIdx++] = u;
+        } else if (u <= 0x7FF) {
+          if (outIdx + 1 >= endIdx) break;
+          heap[outIdx++] = 0xC0 | (u >> 6);
+          heap[outIdx++] = 0x80 | (u & 63);
+        } else if (u <= 0xFFFF) {
+          if (outIdx + 2 >= endIdx) break;
+          heap[outIdx++] = 0xE0 | (u >> 12);
+          heap[outIdx++] = 0x80 | ((u >> 6) & 63);
+          heap[outIdx++] = 0x80 | (u & 63);
+        } else {
+          if (outIdx + 3 >= endIdx) break;
+          if (u > 0x10FFFF) warnOnce('Invalid Unicode code point ' + ptrToString(u) + ' encountered when serializing a JS string to a UTF-8 string in wasm memory! (Valid unicode code points should be in range 0-0x10FFFF).');
+          heap[outIdx++] = 0xF0 | (u >> 18);
+          heap[outIdx++] = 0x80 | ((u >> 12) & 63);
+          heap[outIdx++] = 0x80 | ((u >> 6) & 63);
+          heap[outIdx++] = 0x80 | (u & 63);
+        }
+      }
+      // Null-terminate the pointer to the buffer.
+      heap[outIdx] = 0;
+      return outIdx - startIdx;
+    };
   /** @type {function(string, boolean=, number=)} */
   var intArrayFromString = (stringy, dontAddNull, length) => {
       var len = length > 0 ? length : lengthBytesUTF8(stringy)+1;
@@ -4036,37 +3972,6 @@ async function createWasm() {
   }
   }
 
-  /** @param {number=} offset */
-  var doReadv = (stream, iov, iovcnt, offset) => {
-      var ret = 0;
-      for (var i = 0; i < iovcnt; i++) {
-        var ptr = HEAPU32[((iov)>>2)];
-        var len = HEAPU32[(((iov)+(4))>>2)];
-        iov += 8;
-        var curr = FS.read(stream, HEAP8, ptr, len, offset);
-        if (curr < 0) return -1;
-        ret += curr;
-        if (curr < len) break; // nothing more to read
-        if (typeof offset != 'undefined') {
-          offset += curr;
-        }
-      }
-      return ret;
-    };
-  
-  function _fd_read(fd, iov, iovcnt, pnum) {
-  try {
-  
-      var stream = SYSCALLS.getStreamFromFD(fd);
-      var num = doReadv(stream, iov, iovcnt);
-      HEAPU32[((pnum)>>2)] = num;
-      return 0;
-    } catch (e) {
-    if (typeof FS == 'undefined' || !(e.name === 'ErrnoError')) throw e;
-    return e.errno;
-  }
-  }
-
   
   var INT53_MAX = 9007199254740992;
   
@@ -4138,6 +4043,10 @@ async function createWasm() {
     };
   
   
+  var stringToUTF8 = (str, outPtr, maxBytesToWrite) => {
+      assert(typeof maxBytesToWrite == 'number', 'stringToUTF8(str, outPtr, maxBytesToWrite) is missing the third parameter that specifies the length of the output buffer!');
+      return stringToUTF8Array(str, HEAPU8, outPtr, maxBytesToWrite);
+    };
   
   var stackAlloc = (sz) => __emscripten_stack_alloc(sz);
   var stringToUTF8OnStack = (str) => {
@@ -4220,6 +4129,10 @@ async function createWasm() {
 
 
 
+  var print = out;
+
+  var printErr = err;
+
   var FS_createPath = FS.createPath;
 
 
@@ -4247,17 +4160,11 @@ var wasmImports = {
   /** @export */
   _abort_js: __abort_js,
   /** @export */
-  _tzset_js: __tzset_js,
+  emscripten_asm_const_int: _emscripten_asm_const_int,
   /** @export */
   emscripten_resize_heap: _emscripten_resize_heap,
   /** @export */
-  environ_get: _environ_get,
-  /** @export */
-  environ_sizes_get: _environ_sizes_get,
-  /** @export */
   fd_close: _fd_close,
-  /** @export */
-  fd_read: _fd_read,
   /** @export */
   fd_seek: _fd_seek,
   /** @export */
@@ -4298,6 +4205,8 @@ Module['FS_createPath'] = FS_createPath;
 Module['FS_createDevice'] = FS_createDevice;
 Module['FS_createDataFile'] = FS_createDataFile;
 Module['FS_createLazyFile'] = FS_createLazyFile;
+Module['print'] = print;
+Module['printErr'] = printErr;
 var missingLibrarySymbols = [
   'writeI53ToI64',
   'writeI53ToI64Clamped',
@@ -4320,8 +4229,9 @@ var missingLibrarySymbols = [
   'readSockaddr',
   'writeSockaddr',
   'emscriptenLog',
-  'readEmAsmArgs',
+  'runMainThreadEmAsm',
   'jstoi_q',
+  'getExecutableName',
   'listenOnce',
   'autoResumeAudioContext',
   'getDynCaller',
@@ -4355,6 +4265,7 @@ var missingLibrarySymbols = [
   'formatString',
   'intArrayToString',
   'AsciiToString',
+  'stringToAscii',
   'UTF16ToString',
   'stringToUTF16',
   'lengthBytesUTF16',
@@ -4406,7 +4317,9 @@ var missingLibrarySymbols = [
   'jsStackTrace',
   'getCallstack',
   'convertPCtoSourceLocation',
+  'getEnvStrings',
   'checkWasiClock',
+  'doReadv',
   'wasiRightsToMuslOFlags',
   'wasiOFlagsToMuslOFlags',
   'safeSetTimeout',
@@ -4497,8 +4410,9 @@ var unexportedSymbols = [
   'timers',
   'warnOnce',
   'readEmAsmArgsArray',
+  'readEmAsmArgs',
+  'runEmAsmFunction',
   'jstoi_s',
-  'getExecutableName',
   'asyncLoad',
   'alignMemory',
   'mmapAlloc',
@@ -4516,7 +4430,6 @@ var unexportedSymbols = [
   'stringToUTF8',
   'lengthBytesUTF8',
   'intArrayFromString',
-  'stringToAscii',
   'UTF16Decoder',
   'stringToUTF8OnStack',
   'writeArrayToMemory',
@@ -4527,8 +4440,6 @@ var unexportedSymbols = [
   'restoreOldWindowedStyle',
   'UNWIND_CACHE',
   'ExitStatus',
-  'getEnvStrings',
-  'doReadv',
   'doWritev',
   'initRandomFill',
   'randomFill',
@@ -4569,8 +4480,6 @@ var unexportedSymbols = [
   'IDBStore',
   'allocateUTF8',
   'allocateUTF8OnStack',
-  'print',
-  'printErr',
 ];
 unexportedSymbols.forEach(unexportedRuntimeSymbol);
 

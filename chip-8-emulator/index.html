@@ -40,7 +40,7 @@
       <div class="w-[844px] mx-auto">
         <h1 class="text-3xl font-bold mb-6 text-center">CHIP-8 Emulator</h1>
 
-        <div class="flex gap-4">
+        <div class="flex gap-4 items-start">
           <!-- Emulator Canvas -->
           <canvas
             id="chip8Canvas"
@@ -52,8 +52,7 @@
           <!-- Log window -->
           <div
             id="logWindow"
-            class="border border-white bg-gray-800 p-2 text-xs overflow-y-auto"
-            style="width: 200px; height: 320px"
+            class="border border-white bg-gray-800 p-2 text-xs overflow-y-auto min-w-[240px] w-[240px] h-[328px]"
           ></div>
         </div>
 
@@ -92,9 +91,9 @@
         const logWindow = document.getElementById("logWindow");
         const logEntry = document.createElement("div");
         logEntry.textContent = message;
+        logEntry.classList.add("mb-2"); // Add margin for spacing
         logWindow.appendChild(logEntry);
-        // Auto-scroll to the bottom
-        logWindow.scrollTop = logWindow.scrollHeight;
+        logWindow.scrollTop = logWindow.scrollHeight; // Auto-scroll
       }
 
       function resetEmulator() {
@@ -112,12 +111,26 @@
       let stepTimeoutId;
 
       Module.onRuntimeInitialized = function () {
-        console.log("WASM Loaded!");
         appendLog("WASM Loaded!");
+
+        // Override Module.print to send output to log window
+        Module.print = (function (oldPrint) {
+          return function (text) {
+            appendLog(text);
+            oldPrint(text);
+          };
+        })(Module.print);
+
+        // Also log errors
+        Module.printErr = (function (oldPrintErr) {
+          return function (text) {
+            appendLog("ERROR: " + text);
+            oldPrintErr(text);
+          };
+        })(Module.printErr);
 
         window.startEmulator = function () {
           if (running) return;
-          console.log("Emulator started!");
           appendLog("Emulator started!");
           running = true;
 
@@ -160,24 +173,13 @@
           function step() {
             if (!running) return;
             Module._emulateCycle();
-
-            const dummyOpcode =
-              "0x" +
-              Math.floor(Math.random() * 0xfff)
-                .toString(16)
-                .padStart(3, "0");
-            appendLog(
-              `Executed opcode: ${dummyOpcode} at ${new Date().toLocaleTimeString()}`
-            );
-
             render();
-            stepTimeoutId = setTimeout(step, 200);
+            stepTimeoutId = setTimeout(step, 250);
           }
           step();
         };
 
         window.stopEmulator = function () {
-          console.log("Emulator stopped!");
           appendLog("Emulator stopped!");
           running = false;
           clearTimeout(stepTimeoutId);
@@ -192,7 +194,6 @@
           if (file) {
             let reader = new FileReader();
             reader.onload = function (e) {
-              console.log("ROM Loaded:", file.name);
               appendLog("ROM Loaded: " + file.name);
               let romData = new Uint8Array(e.target.result);
 
@@ -222,7 +223,6 @@
           Module._loadROM(ptr, romData.length);
           Module._free(ptr);
 
-          console.log("IBM Logo ROM loaded successfully");
           appendLog("IBM Logo ROM loaded successfully");
         } catch (error) {
           console.error("Error loading IBM Logo ROM:", error);
@@ -241,7 +241,6 @@
           Module._loadROM(ptr, romData.length);
           Module._free(ptr);
 
-          console.log("Chip-8 Logo ROM loaded successfully");
           appendLog("Chip-8 Logo ROM loaded successfully");
         } catch (error) {
           console.error("Error loading Chip-8 Logo ROM:", error);
