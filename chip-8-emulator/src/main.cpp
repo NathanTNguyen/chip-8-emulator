@@ -19,4 +19,8 @@ extern "C" { // Expose to JS
         std::cout << "getDisplay() called!" << std::endl;
         return chip8.getDisplayBuffer();
     }
+
+    EMSCRIPTEN_KEEPALIVE void reset() {
+        chip8.reset();
+    }
 }

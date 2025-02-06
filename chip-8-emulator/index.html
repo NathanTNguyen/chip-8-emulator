@@ -9,13 +9,21 @@
     <script src="chip8.js"></script>
     <link href="output.css" rel="stylesheet" />
   </head>
-  <body class="min-h-screen bg-gray-900 text-white">
+  <body class="min-h-screen bg-gray-900 text-white min-w-[1400px]">
     <!-- Sidebar -->
     <div
       class="w-64 fixed left-0 top-0 bottom-0 bg-gray-800 p-4 overflow-y-auto"
     >
-      <h2 class="text-xl font-bold mb-4">Choose a ROM</h2>
+      <h2 class="text-xl font-bold mb-4">ROM List</h2>
       <ul>
+        <li class="mb-2">
+          <button
+            onclick="loadChip8Logo()"
+            class="w-full text-left px-2 py-1 hover:bg-gray-700 rounded"
+          >
+            Chip-8 Logo ROM
+        </button>
+        </li>
         <li class="mb-2">
           <button
             onclick="loadIBMLogo()"
@@ -68,6 +76,12 @@
           >
             Stop
           </button>
+          <button
+            onclick="resetEmulator()"
+            class="bg-yellow-600 hover:bg-yellow-700 text-white font-semibold py-2 px-4 rounded-lg transition"
+          >
+            Reset
+          </button>
         </div>
       </div>
     </div>
@@ -81,6 +95,16 @@
         logWindow.appendChild(logEntry);
         // Auto-scroll to the bottom
         logWindow.scrollTop = logWindow.scrollHeight;
+      }
+
+      function resetEmulator() {
+        stopEmulator();
+        Module._reset();
+        //clear the canvas
+        let canvas = document.getElementById("chip8Canvas");
+        let ctx = canvas.getContext("2d");
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        appendLog("Emulator has been reset");
       }
 
       let running = false;
@@ -203,6 +227,25 @@
         } catch (error) {
           console.error("Error loading IBM Logo ROM:", error);
           appendLog("Error loading IBM Logo ROM: " + error);
+        }
+      }
+
+      async function loadChip8Logo() {
+        try {
+          const reponse = await fetch("roms/1-chip8-logo.ch8");
+          const arrayBuffer = await reponse.arrayBuffer();
+          const romData = new Uint8Array(arrayBuffer);
+
+          let ptr = Module._malloc(romData.length);
+          Module.HEAPU8.set(romData, ptr);
+          Module._loadROM(ptr, romData.length);
+          Module._free(ptr);
+
+          console.log("Chip-8 Logo ROM loaded successfully");
+          appendLog("Chip-8 Logo ROM loaded successfully");
+        } catch (error) {
+          console.error("Error loading Chip-8 Logo ROM:", error);
+          appendLog("Error loading Chip-8 Logo ROM: " + error);
         }
       }
     </script>

@@ -10,6 +10,7 @@ class Chip8 {
         void loadROM(const uint8_t* romData, size_t size); //loads ROM
         void emulateCycle(); //fetch, decode and execute an opcode/instruction
         void executeOpcode(uint16_t opcode);
+        void reset(); // reset the emulator
         uint8_t* getDisplayBuffer();
 
     private:

@@ -3,9 +3,24 @@
 #include <fstream>
 #include <vector>
 #include <iomanip>
+#include <algorithm>
 
 Chip8::Chip8() {
     PC = 0x200; //programs start at memory address 0x200
+}
+
+void Chip8::reset() {
+    //reset the program counter to the start location of most programs
+    PC = 0x200;\
+    //clear memory
+    memory.fill(0);
+    //clear the registers
+    V.fill(0);
+    //reset index
+    I = 0;
+    //clear the display
+    display.fill(0);
+    std::cout << "Chip-8 state has been reset" << std::endl;
 }
 
 void Chip8::loadROM(const uint8_t* romData, size_t size) {

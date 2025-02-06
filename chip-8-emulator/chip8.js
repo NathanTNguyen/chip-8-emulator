@@ -31,7 +31,7 @@ if (ENVIRONMENT_IS_NODE) {
 
 // --pre-jses are emitted after the Module integration code, so that they can
 // refer to Module (if they choose; they can also define Module)
-// include: C:\Users\ALLIED~1\AppData\Local\Temp\tmppmg4a8ez.js
+// include: C:\Users\ALLIED~1\AppData\Local\Temp\tmpe8hfvnj3.js
 
   Module['expectedDataFileDownloads'] ??= 0;
   Module['expectedDataFileDownloads']++;
@@ -212,21 +212,21 @@ Module['FS_createPath']("/", "roms", true, true);
 
   })();
 
-// end include: C:\Users\ALLIED~1\AppData\Local\Temp\tmppmg4a8ez.js
-// include: C:\Users\ALLIED~1\AppData\Local\Temp\tmpgyv6vq_4.js
+// end include: C:\Users\ALLIED~1\AppData\Local\Temp\tmpe8hfvnj3.js
+// include: C:\Users\ALLIED~1\AppData\Local\Temp\tmpt1f7z0qx.js
 
     // All the pre-js content up to here must remain later on, we need to run
     // it.
     if (Module['$ww'] || (typeof ENVIRONMENT_IS_PTHREAD != 'undefined' && ENVIRONMENT_IS_PTHREAD)) Module['preRun'] = [];
     var necessaryPreJSTasks = Module['preRun'].slice();
-  // end include: C:\Users\ALLIED~1\AppData\Local\Temp\tmpgyv6vq_4.js
-// include: C:\Users\ALLIED~1\AppData\Local\Temp\tmp9ymmttdt.js
+  // end include: C:\Users\ALLIED~1\AppData\Local\Temp\tmpt1f7z0qx.js
+// include: C:\Users\ALLIED~1\AppData\Local\Temp\tmpq_6z5gcq.js
 
     if (!Module['preRun']) throw 'Module.preRun should exist because file support used it; did a pre-js delete it?';
     necessaryPreJSTasks.forEach((task) => {
       if (Module['preRun'].indexOf(task) < 0) throw 'All preRun tasks that exist before user pre-js code should remain after; did you replace Module or modify Module.preRun?';
     });
-  // end include: C:\Users\ALLIED~1\AppData\Local\Temp\tmp9ymmttdt.js
+  // end include: C:\Users\ALLIED~1\AppData\Local\Temp\tmpq_6z5gcq.js
 
 
 // Sometimes an existing Module object exists with properties
@@ -4269,6 +4269,7 @@ var ___wasm_call_ctors = createExportWrapper('__wasm_call_ctors', 0);
 var _loadROM = Module['_loadROM'] = createExportWrapper('loadROM', 2);
 var _emulateCycle = Module['_emulateCycle'] = createExportWrapper('emulateCycle', 0);
 var _getDisplay = Module['_getDisplay'] = createExportWrapper('getDisplay', 0);
+var _reset = Module['_reset'] = createExportWrapper('reset', 0);
 var _fflush = createExportWrapper('fflush', 1);
 var _strerror = createExportWrapper('strerror', 1);
 var _malloc = Module['_malloc'] = createExportWrapper('malloc', 1);
