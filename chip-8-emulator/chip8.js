@@ -31,7 +31,7 @@ if (ENVIRONMENT_IS_NODE) {
 
 // --pre-jses are emitted after the Module integration code, so that they can
 // refer to Module (if they choose; they can also define Module)
-// include: C:\Users\ALLIED~1\AppData\Local\Temp\tmpe8hfvnj3.js
+// include: C:\Users\ALLIED~1\AppData\Local\Temp\tmpxnyuxudg.js
 
   Module['expectedDataFileDownloads'] ??= 0;
   Module['expectedDataFileDownloads']++;
@@ -208,25 +208,25 @@ Module['FS_createPath']("/", "roms", true, true);
     }
 
     }
-    loadPackage({"files": [{"filename": "/roms/1-chip8-logo.ch8", "start": 0, "end": 260}, {"filename": "/roms/ibm-logo.ch8", "start": 260, "end": 392}], "remote_package_size": 392});
+    loadPackage({"files": [{"filename": "/roms/1-chip8-logo.ch8", "start": 0, "end": 260}, {"filename": "/roms/Maze [David Winter, 199x].ch8", "start": 260, "end": 294}, {"filename": "/roms/ibm-logo.ch8", "start": 294, "end": 426}], "remote_package_size": 426});
 
   })();
 
-// end include: C:\Users\ALLIED~1\AppData\Local\Temp\tmpe8hfvnj3.js
-// include: C:\Users\ALLIED~1\AppData\Local\Temp\tmpt1f7z0qx.js
+// end include: C:\Users\ALLIED~1\AppData\Local\Temp\tmpxnyuxudg.js
+// include: C:\Users\ALLIED~1\AppData\Local\Temp\tmps8ap4kpr.js
 
     // All the pre-js content up to here must remain later on, we need to run
     // it.
     if (Module['$ww'] || (typeof ENVIRONMENT_IS_PTHREAD != 'undefined' && ENVIRONMENT_IS_PTHREAD)) Module['preRun'] = [];
     var necessaryPreJSTasks = Module['preRun'].slice();
-  // end include: C:\Users\ALLIED~1\AppData\Local\Temp\tmpt1f7z0qx.js
-// include: C:\Users\ALLIED~1\AppData\Local\Temp\tmpq_6z5gcq.js
+  // end include: C:\Users\ALLIED~1\AppData\Local\Temp\tmps8ap4kpr.js
+// include: C:\Users\ALLIED~1\AppData\Local\Temp\tmp8dy1ovt4.js
 
     if (!Module['preRun']) throw 'Module.preRun should exist because file support used it; did a pre-js delete it?';
     necessaryPreJSTasks.forEach((task) => {
       if (Module['preRun'].indexOf(task) < 0) throw 'All preRun tasks that exist before user pre-js code should remain after; did you replace Module or modify Module.preRun?';
     });
-  // end include: C:\Users\ALLIED~1\AppData\Local\Temp\tmpq_6z5gcq.js
+  // end include: C:\Users\ALLIED~1\AppData\Local\Temp\tmp8dy1ovt4.js
 
 
 // Sometimes an existing Module object exists with properties
