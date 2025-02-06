@@ -70,6 +70,20 @@ void Chip8::executeOpcode(uint16_t opcode)
                 appendLog("Executed: Clear Screen (0x00E0)");
             });
         }
+        else if (opcode == 0x00EE) { //0x00EE - return from subroutine
+            if (SP == 0) {
+                EM_ASM({appendLog("ERROR: Stack underflow on 0x00EE!!!")});
+            }
+            else {
+                SP--; //decrement stack pointer
+                PC = stack[SP]; //move the pointer
+                EM_ASM_({var hexAddr = ("000" + $0.toString(16)).slice(-3);
+                appendLog("Executed: Return from subroutine (0x00EE), jumping to 0x" + hexAddr);
+            }, PC);
+            // PC explicity set, exiting early to avoid PC increment
+            return;
+            }
+        }
         PC += 2;
         break;
     case 0x1000:
@@ -81,6 +95,22 @@ void Chip8::executeOpcode(uint16_t opcode)
                 appendLog("Executed: Jump to address 0x" + hexAddr); }, NNN);
     }
     break;
+    case 0x2000:
+    { // 0x2NNN - Call subroutine at NNN
+        uint16_t NNN = opcode & 0x0FFF; //extract NNN from opcode
+        if (SP >= stack.size()) {
+            EM_ASM({appendLog("ERROR: Stack overflow on 0x2NNN!!!")});
+        }
+        else {
+            stack[SP] = PC + 2; //push return address to the stack
+            SP++; //increment stack pointer
+            PC = NNN; //set the PC to NNN to jump to the subroutine
+            EM_ASM_({var hexAddr = ("000" + $0.toString(16)).slice(-3);
+            appendLog("Executed: Call subroutine at 0x" + hexAddr);
+            }, NNN);
+        }
+        return; //return early since PC is explictly set
+    }
     case 0x6000:
     {                                       // 0x6XNN - Set VX to NN
         uint8_t X = (opcode & 0x0F00) >> 8; // Extract X

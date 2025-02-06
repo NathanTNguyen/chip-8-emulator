@@ -31,7 +31,7 @@ if (ENVIRONMENT_IS_NODE) {
 
 // --pre-jses are emitted after the Module integration code, so that they can
 // refer to Module (if they choose; they can also define Module)
-// include: C:\Users\ALLIED~1\AppData\Local\Temp\tmpnx7xp_8w.js
+// include: C:\Users\ALLIED~1\AppData\Local\Temp\tmpup_o9ehi.js
 
   Module['expectedDataFileDownloads'] ??= 0;
   Module['expectedDataFileDownloads']++;
@@ -208,25 +208,25 @@ Module['FS_createPath']("/", "roms", true, true);
     }
 
     }
-    loadPackage({"files": [{"filename": "/roms/1-chip8-logo.ch8", "start": 0, "end": 260}, {"filename": "/roms/Maze [David Winter, 199x].ch8", "start": 260, "end": 294}, {"filename": "/roms/ibm-logo.ch8", "start": 294, "end": 426}], "remote_package_size": 426});
+    loadPackage({"files": [{"filename": "/roms/1-chip8-logo.ch8", "start": 0, "end": 260}, {"filename": "/roms/Maze [David Winter, 199x].ch8", "start": 260, "end": 294}, {"filename": "/roms/Particle Demo [zeroZshadow, 2008].ch8", "start": 294, "end": 647}, {"filename": "/roms/ibm-logo.ch8", "start": 647, "end": 779}], "remote_package_size": 779});
 
   })();
 
-// end include: C:\Users\ALLIED~1\AppData\Local\Temp\tmpnx7xp_8w.js
-// include: C:\Users\ALLIED~1\AppData\Local\Temp\tmpv80l5zbc.js
+// end include: C:\Users\ALLIED~1\AppData\Local\Temp\tmpup_o9ehi.js
+// include: C:\Users\ALLIED~1\AppData\Local\Temp\tmp8_66qxqt.js
 
     // All the pre-js content up to here must remain later on, we need to run
     // it.
     if (Module['$ww'] || (typeof ENVIRONMENT_IS_PTHREAD != 'undefined' && ENVIRONMENT_IS_PTHREAD)) Module['preRun'] = [];
     var necessaryPreJSTasks = Module['preRun'].slice();
-  // end include: C:\Users\ALLIED~1\AppData\Local\Temp\tmpv80l5zbc.js
-// include: C:\Users\ALLIED~1\AppData\Local\Temp\tmpaw2vdyj9.js
+  // end include: C:\Users\ALLIED~1\AppData\Local\Temp\tmp8_66qxqt.js
+// include: C:\Users\ALLIED~1\AppData\Local\Temp\tmp3clfmx8l.js
 
     if (!Module['preRun']) throw 'Module.preRun should exist because file support used it; did a pre-js delete it?';
     necessaryPreJSTasks.forEach((task) => {
       if (Module['preRun'].indexOf(task) < 0) throw 'All preRun tasks that exist before user pre-js code should remain after; did you replace Module or modify Module.preRun?';
     });
-  // end include: C:\Users\ALLIED~1\AppData\Local\Temp\tmpaw2vdyj9.js
+  // end include: C:\Users\ALLIED~1\AppData\Local\Temp\tmp3clfmx8l.js
 
 
 // Sometimes an existing Module object exists with properties
@@ -1045,12 +1045,16 @@ var ASM_CONSTS = {
  68030: ($0) => { appendLog("Loaded ROM successfully (" + $0.toString() + " bytes)"); },  
  68102: ($0) => { var hexOpcode = ("0000" + $0.toString(16)).slice(-4); appendLog("Fetched opcode: 0x" + hexOpcode); },  
  68205: () => { appendLog("Executed: Clear Screen (0x00E0)"); },  
- 68255: ($0) => { var hexAddr = ("000" + $0.toString(16)).slice(-3); appendLog("Executed: Jump to address 0x" + hexAddr); },  
- 68363: ($0, $1) => { appendLog("Executed: Set V" + $0.toString() + " = 0x" + ($1.toString(16).toUpperCase().padStart(2, "0"))); },  
- 68474: ($0, $1, $2) => { appendLog("Executed: V" + $0.toString() + " += 0x" + ($1.toString(16).toUpperCase().padStart(2, "0")) + " (New V" + $0.toString() + " = 0x" + ($2.toString(16).toUpperCase().padStart(2, "0")) + ")"); },  
- 68677: ($0) => { var hexI = ("000" + $0.toString(16)).slice(-3); appendLog("Executed: Set I = 0x" + hexI); },  
- 68771: ($0, $1, $2) => { appendLog("Executed: Draw sprite at (V" + $0.toString() + ", V" + $1.toString() + ") with height " + $2.toString()); },  
- 68892: () => { appendLog("Executed: Unknown opcode encountered."); }
+ 68255: () => { appendLog("ERROR: Stack underflow on 0x00EE!!!") },  
+ 68306: ($0) => { var hexAddr = ("000" + $0.toString(16)).slice(-3); appendLog("Executed: Return from subroutine (0x00EE), jumping to 0x" + hexAddr); },  
+ 68441: ($0) => { var hexAddr = ("000" + $0.toString(16)).slice(-3); appendLog("Executed: Jump to address 0x" + hexAddr); },  
+ 68549: () => { appendLog("ERROR: Stack overflow on 0x2NNN!!!") },  
+ 68599: ($0) => { var hexAddr = ("000" + $0.toString(16)).slice(-3); appendLog("Executed: Call subroutine at 0x" + hexAddr); },  
+ 68709: ($0, $1) => { appendLog("Executed: Set V" + $0.toString() + " = 0x" + ($1.toString(16).toUpperCase().padStart(2, "0"))); },  
+ 68820: ($0, $1, $2) => { appendLog("Executed: V" + $0.toString() + " += 0x" + ($1.toString(16).toUpperCase().padStart(2, "0")) + " (New V" + $0.toString() + " = 0x" + ($2.toString(16).toUpperCase().padStart(2, "0")) + ")"); },  
+ 69023: ($0) => { var hexI = ("000" + $0.toString(16)).slice(-3); appendLog("Executed: Set I = 0x" + hexI); },  
+ 69117: ($0, $1, $2) => { appendLog("Executed: Draw sprite at (V" + $0.toString() + ", V" + $1.toString() + ") with height " + $2.toString()); },  
+ 69238: () => { appendLog("Executed: Unknown opcode encountered."); }
 };
 
 // end include: preamble.js

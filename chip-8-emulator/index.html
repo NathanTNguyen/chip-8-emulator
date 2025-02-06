@@ -111,7 +111,7 @@
       let stepTimeoutId;
 
       Module.onRuntimeInitialized = function () {
-        appendLog("WASM Loaded!");
+        appendLog("CHIP-8 Emulator loaded!");
 
         // Override Module.print to send output to log window
         Module.print = (function (oldPrint) {
