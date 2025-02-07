@@ -5,7 +5,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>CHIP-8 Emulator</title>
+    <title>CHIP-8 Emulator in C++</title>
     <script src="chip8.js"></script>
     <link href="output.css" rel="stylesheet" />
   </head>
@@ -38,7 +38,7 @@
     <!-- Main Content -->
     <div class="flex-1 flex flex-col items-center pt-12">
       <div class="w-[844px] mx-auto">
-        <h1 class="text-3xl font-bold mb-6 text-center">CHIP-8 Emulator</h1>
+        <h1 class="text-3xl font-bold mb-6 text-center">CHIP-8 Emulator in C++</h1>
 
         <div class="flex gap-4 items-start">
           <!-- Emulator Canvas -->
@@ -99,11 +99,15 @@
       function resetEmulator() {
         stopEmulator();
         Module._reset();
+        //clear the log window
+        let logWindow = document.getElementById("logWindow");
+        logWindow.innerHTML = "";
         //clear the canvas
         let canvas = document.getElementById("chip8Canvas");
         let ctx = canvas.getContext("2d");
         ctx.clearRect(0, 0, canvas.width, canvas.height);
-        appendLog("Emulator has been reset");
+        appendLog("Emulator has been reset!");
+        appendLog("Load a ROM from the ROM List to get started!");
       }
 
       let running = false;
@@ -112,6 +116,7 @@
 
       Module.onRuntimeInitialized = function () {
         appendLog("CHIP-8 Emulator loaded!");
+        appendLog("Load a ROM from the ROM List to get started!");
 
         // Override Module.print to send output to log window
         Module.print = (function (oldPrint) {
