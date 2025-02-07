@@ -115,41 +115,54 @@ void Chip8::executeOpcode(uint16_t opcode)
         return; // return early since PC is explictly set
     }
     case 0x3000:
-    { // 0x3XNN - Skip next instruction if V[X] == NN
-        uint8_t X = (opcode & 0x0F00) >> 8; //extract X
-        uint8_t NN = opcode & 0x00FF; //extract NN
+    {                                       // 0x3XNN - Skip next instruction if V[X] == NN
+        uint8_t X = (opcode & 0x0F00) >> 8; // extract X
+        uint8_t NN = opcode & 0x00FF;       // extract NN
 
-        if (V[X] == NN) {
-            PC += 4; //skip the next instruction (2 bytes for current instruction + 2 for next)
-            EM_ASM_({appendLog("Executed: Skip next instruction because V" + $0.toString() + " equals 0x" + ($1.toString(16).toUpperCase().padStart(2, "0")));
-            }, X, NN);
-        }
-        else 
+        if (V[X] == NN)
         {
-            PC += 2; //otherwise proceed as normal
-            EM_ASM_({
-            appendLog("Executed: No skip because V" + $0.toString() + " does not equal 0x" + ($1.toString(16).toUpperCase().padStart(2, "0")));
-            }, X, NN);
+            PC += 4; // skip the next instruction (2 bytes for current instruction + 2 for next)
+            EM_ASM_({ appendLog("Executed: Skip next instruction because V" + $0.toString() + " equals 0x" + ($1.toString(16).toUpperCase().padStart(2, "0"))); }, X, NN);
+        }
+        else
+        {
+            PC += 2; // otherwise proceed as normal
+            EM_ASM_({ appendLog("Executed: No skip because V" + $0.toString() + " does not equal 0x" + ($1.toString(16).toUpperCase().padStart(2, "0"))); }, X, NN);
         }
         break;
     }
     case 0x4000:
-    { //0x4XNN - Skip next instruction if V[X] != NN
+    { // 0x4XNN - Skip next instruction if V[X] != NN
         uint8_t X = (opcode & 0x0F00) >> 8;
         uint8_t NN = opcode & 0x00FF;
 
         if (V[X] != NN)
         {
-            PC += 4; //skip the next instruction (2 bytes for current and 2 bytes for next)
-            EM_ASM_({appendLog("Executed: Skip next instruction because V" + $0.toString() + " not equals 0x" + ($1.toString(16).toUpperCase().padStart(2, "0")));
-            }, X, NN);
+            PC += 4; // skip the next instruction (2 bytes for current and 2 bytes for next)
+            EM_ASM_({ appendLog("Executed: Skip next instruction because V" + $0.toString() + " not equals 0x" + ($1.toString(16).toUpperCase().padStart(2, "0"))); }, X, NN);
         }
         else
         {
-            PC += 2; //proceed as normal
-            EM_ASM_({
-            appendLog("Executed: No skip because V" + $0.toString() + " equals 0x" + ($1.toString(16).toUpperCase().padStart(2, "0")));
-            }, X, NN);
+            PC += 2; // proceed as normal
+            EM_ASM_({ appendLog("Executed: No skip because V" + $0.toString() + " equals 0x" + ($1.toString(16).toUpperCase().padStart(2, "0"))); }, X, NN);
+        }
+        break;
+    }
+    case 0x5000:
+    {                                       // 0x5XY0 - Skip next instruction if V[X] == V[Y] and opcode ends in 0
+        uint8_t X = (opcode & 0x0F00) >> 8; // extract X
+        uint8_t Y = (opcode & 0x00F0) >> 4; // extract Y
+        uint8_t END = opcode & 0x0000F;
+
+        if ((V[X] == V[Y]) && END == 0)
+        {
+            PC += 4; // skip next instruction (2 bytes for current + 2 for next)
+            EM_ASM_({ appendLog("Executed: Skip because V[" + $0.toString() + "]" + " equals V[" + $1.toString() + "]" + " and opcode ended in " + $2.toString()); }, X, Y, END);
+        }
+        else
+        {
+            PC += 2; // proceed as normal
+            EM_ASM_({ appendLog("Executed: No skip because V[" + $0.toString() + "]" + " does not equal V[" + $1.toString() + "]" + " or opcode did not ended in " + $2.toString()); }, X, Y, END);
         }
         break;
     }
