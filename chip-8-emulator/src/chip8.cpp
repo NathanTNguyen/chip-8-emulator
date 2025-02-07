@@ -121,7 +121,7 @@ void Chip8::executeOpcode(uint16_t opcode)
 
         if (V[X] == NN) {
             PC += 4; //skip the next instruction (2 bytes for current instruction + 2 for next)
-            EM_ASM({appendLog("Executed: Skip next instruction because V" + $0.toString() + " equals 0x" + ($1.soString(16).toUpperCase().padStart(2, "0")));
+            EM_ASM_({appendLog("Executed: Skip next instruction because V" + $0.toString() + " equals 0x" + ($1.toString(16).toUpperCase().padStart(2, "0")));
             }, X, NN);
         }
         else 
@@ -129,6 +129,26 @@ void Chip8::executeOpcode(uint16_t opcode)
             PC += 2; //otherwise proceed as normal
             EM_ASM_({
             appendLog("Executed: No skip because V" + $0.toString() + " does not equal 0x" + ($1.toString(16).toUpperCase().padStart(2, "0")));
+            }, X, NN);
+        }
+        break;
+    }
+    case 0x4000:
+    { //0x4XNN - Skip next instruction if V[X] != NN
+        uint8_t X = (opcode & 0x0F00) >> 8;
+        uint8_t NN = opcode & 0x00FF;
+
+        if (V[X] != NN)
+        {
+            PC += 4; //skip the next instruction (2 bytes for current and 2 bytes for next)
+            EM_ASM_({appendLog("Executed: Skip next instruction because V" + $0.toString() + " not equals 0x" + ($1.toString(16).toUpperCase().padStart(2, "0")));
+            }, X, NN);
+        }
+        else
+        {
+            PC += 2; //proceed as normal
+            EM_ASM_({
+            appendLog("Executed: No skip because V" + $0.toString() + " equals 0x" + ($1.toString(16).toUpperCase().padStart(2, "0")));
             }, X, NN);
         }
         break;
