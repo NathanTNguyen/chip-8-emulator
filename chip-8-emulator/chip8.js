@@ -31,7 +31,7 @@ if (ENVIRONMENT_IS_NODE) {
 
 // --pre-jses are emitted after the Module integration code, so that they can
 // refer to Module (if they choose; they can also define Module)
-// include: C:\Users\ALLIED~1\AppData\Local\Temp\tmp6bp68nmk.js
+// include: C:\Users\ALLIED~1\AppData\Local\Temp\tmposjovkcz.js
 
   Module['expectedDataFileDownloads'] ??= 0;
   Module['expectedDataFileDownloads']++;
@@ -212,21 +212,21 @@ Module['FS_createPath']("/", "roms", true, true);
 
   })();
 
-// end include: C:\Users\ALLIED~1\AppData\Local\Temp\tmp6bp68nmk.js
-// include: C:\Users\ALLIED~1\AppData\Local\Temp\tmpj115c5w_.js
+// end include: C:\Users\ALLIED~1\AppData\Local\Temp\tmposjovkcz.js
+// include: C:\Users\ALLIED~1\AppData\Local\Temp\tmpd8anybt7.js
 
     // All the pre-js content up to here must remain later on, we need to run
     // it.
     if (Module['$ww'] || (typeof ENVIRONMENT_IS_PTHREAD != 'undefined' && ENVIRONMENT_IS_PTHREAD)) Module['preRun'] = [];
     var necessaryPreJSTasks = Module['preRun'].slice();
-  // end include: C:\Users\ALLIED~1\AppData\Local\Temp\tmpj115c5w_.js
-// include: C:\Users\ALLIED~1\AppData\Local\Temp\tmp7hjsg1io.js
+  // end include: C:\Users\ALLIED~1\AppData\Local\Temp\tmpd8anybt7.js
+// include: C:\Users\ALLIED~1\AppData\Local\Temp\tmpjrbgviu0.js
 
     if (!Module['preRun']) throw 'Module.preRun should exist because file support used it; did a pre-js delete it?';
     necessaryPreJSTasks.forEach((task) => {
       if (Module['preRun'].indexOf(task) < 0) throw 'All preRun tasks that exist before user pre-js code should remain after; did you replace Module or modify Module.preRun?';
     });
-  // end include: C:\Users\ALLIED~1\AppData\Local\Temp\tmp7hjsg1io.js
+  // end include: C:\Users\ALLIED~1\AppData\Local\Temp\tmpjrbgviu0.js
 
 
 // Sometimes an existing Module object exists with properties
@@ -1055,14 +1055,16 @@ var ASM_CONSTS = {
  69003: ($0, $1) => { appendLog("Executed: Skip next instruction because V" + $0.toString() + " not equals 0x" + ($1.toString(16).toUpperCase().padStart(2, "0"))); },  
  69149: ($0, $1) => { appendLog("Executed: No skip because V" + $0.toString() + " equals 0x" + ($1.toString(16).toUpperCase().padStart(2, "0"))); },  
  69277: ($0, $1, $2) => { appendLog("Executed: Skip because V[" + $0.toString() + "]" + " equals V[" + $1.toString() + "]" + " and opcode ended in " + $2.toString()); },  
- 69422: ($0, $1, $2) => { appendLog("Executed: No skip because V[" + $0.toString() + "]" + " does not equal V[" + $1.toString() + "]" + " or opcode did not ended in " + $2.toString()); },  
- 69585: ($0, $1) => { appendLog("Executed: Set V" + $0.toString() + " = 0x" + ($1.toString(16).toUpperCase().padStart(2, "0"))); },  
- 69696: ($0, $1, $2) => { appendLog("Executed: V" + $0.toString() + " += 0x" + ($1.toString(16).toUpperCase().padStart(2, "0")) + " (New V" + $0.toString() + " = 0x" + ($2.toString(16).toUpperCase().padStart(2, "0")) + ")"); },  
- 69899: ($0, $1, $2, $3) => { appendLog("Executed: V[" + $0.toString() + "] = V[" + $1.toString() + "] (" + "0x" + $2.toString(16).toUpperCase().padStart(2, "0") + " = " + "0x" + $3.toString(16).toUpperCase().padStart(2, "0") + ")"); },  
- 70107: ($0, $1, $2, $3, $4) => { appendLog("Executed: V[" + $0.toString() + "] |= V[" + $1.toString() + "] (0x" + $2.toString(16).toUpperCase().padStart(2, "0") + " |= 0x" + $3.toString(16).toUpperCase().padStart(2, "0") + " => 0x" + $4.toString(16).toUpperCase().padStart(2, "0") + ")"); },  
- 70367: ($0) => { var hexI = ("000" + $0.toString(16)).slice(-3); appendLog("Executed: Set I = 0x" + hexI); },  
- 70461: ($0, $1, $2) => { appendLog("Executed: Draw sprite at (V" + $0.toString() + ", V" + $1.toString() + ") with height " + $2.toString()); },  
- 70582: () => { appendLog("Executed: Unknown opcode encountered."); }
+ 69422: ($0, $1, $2) => { appendLog("Executed: No skip because V[" + $0.toString() + "]" + " does not equal V[" + $1.toString() + "]" + " or opcode did not end in " + $2.toString()); },  
+ 69583: ($0, $1) => { appendLog("Executed: Set V" + $0.toString() + " = 0x" + ($1.toString(16).toUpperCase().padStart(2, "0"))); },  
+ 69694: ($0, $1, $2) => { appendLog("Executed: V" + $0.toString() + " += 0x" + ($1.toString(16).toUpperCase().padStart(2, "0")) + " (New V" + $0.toString() + " = 0x" + ($2.toString(16).toUpperCase().padStart(2, "0")) + ")"); },  
+ 69897: ($0, $1, $2, $3) => { appendLog("Executed: V[" + $0.toString() + "] = V[" + $1.toString() + "] (" + "0x" + $2.toString(16).toUpperCase().padStart(2, "0") + " = " + "0x" + $3.toString(16).toUpperCase().padStart(2, "0") + ")"); },  
+ 70105: ($0, $1, $2, $3, $4) => { appendLog("Executed: V[" + $0.toString() + "] |= V[" + $1.toString() + "] (0x" + $2.toString(16).toUpperCase().padStart(2, "0") + " |= 0x" + $3.toString(16).toUpperCase().padStart(2, "0") + " => 0x" + $4.toString(16).toUpperCase().padStart(2, "0") + ")"); },  
+ 70365: ($0, $1, $2, $3, $4) => { appendLog("Executed: V[" + $0.toString() + "] &= V[" + $1.toString() + "] (0x" + $2.toString(16).toUpperCase().padStart(2, "0") + " &= 0x" + $3.toString(16).toUpperCase().padStart(2, "0") + " => 0x" + $4.toString(16).toUpperCase().padStart(2, "0") + ")"); },  
+ 70625: ($0, $1, $2, $3, $4) => { appendLog("Executed: V[" + $0.toString() + "] ^= V[" + $1.toString() + "] (0x" + $2.toString(16).toUpperCase().padStart(2, '0') + " ^= 0x" + $3.toString(16).toUpperCase().padStart(2, '0') + " => 0x" + $4.toString(16).toUpperCase().padStart(2, '0') + ")"); },  
+ 70885: ($0) => { var hexI = ("000" + $0.toString(16)).slice(-3); appendLog("Executed: Set I = 0x" + hexI); },  
+ 70979: ($0, $1, $2) => { appendLog("Executed: Draw sprite at (V" + $0.toString() + ", V" + $1.toString() + ") with height " + $2.toString()); },  
+ 71100: () => { appendLog("Executed: Unknown opcode encountered."); }
 };
 
 // end include: preamble.js
