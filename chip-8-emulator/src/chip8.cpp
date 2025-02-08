@@ -185,6 +185,26 @@ void Chip8::executeOpcode(uint16_t opcode)
         PC += 2;
         break;
     }
+    case 0x8000:
+    {
+        switch (opcode & 0x000F)
+        {
+        case 0x0000:
+        {
+            uint8_t X = (opcode & 0x0F00) >> 8; // extract X
+            uint8_t Y = (opcode & 0x00F0) >> 4; // extract Y
+            V[X] = V[Y];                        // setting the value in register Y to register X
+            EM_ASM_({ appendLog("Executed: V[" + $0.toString() + "] = V[" + $1.toString() + "] (" + "0x" + $2.toString(16).toUpperCase().padStart(2, "0") + " = " + "0x" + $3.toString(16).toUpperCase().padStart(2, "0") + ")"); }, X, Y, V[X], V[Y]);
+            PC += 2;
+            break;
+        }
+        default:
+        {
+            PC += 2;
+        }
+        }
+        break;
+    }
     case 0xA000:
     {                                   // 0xANNN - Set index register I
         uint16_t NNN = opcode & 0x0FFF; // Extract NNN (12-bit address)
