@@ -22,6 +22,10 @@ void Chip8::reset()
     I = 0;
     // Clear the display
     display.fill(0);
+    // Reset the stack pointer
+    SP = 0;
+    //clear the stack
+    stack.fill(0);
     // Log the reset action
     EM_ASM({
         appendLog("Chip-8 state has been reset");
@@ -162,7 +166,7 @@ void Chip8::executeOpcode(uint16_t opcode)
         else
         {
             PC += 2; // proceed as normal
-            EM_ASM_({ appendLog("Executed: No skip because V[" + $0.toString() + "]" + " does not equal V[" + $1.toString() + "]" + " or opcode did not ended in " + $2.toString()); }, X, Y, END);
+            EM_ASM_({ appendLog("Executed: No skip because V[" + $0.toString() + "]" + " does not equal V[" + $1.toString() + "]" + " or opcode did not end in " + $2.toString()); }, X, Y, END);
         }
         break;
     }
@@ -211,6 +215,32 @@ void Chip8::executeOpcode(uint16_t opcode)
             PC += 2;
             break;
         }
+        case 0x0002: // 0x8XY2 - Set V[X] = V[X] & V[Y]
+        {
+            uint8_t X = (opcode & 0x0F00) >> 8; // extract X
+            uint8_t Y = (opcode & 0x00F0) >> 4; // extract Y
+            uint8_t oldVX = V[X];
+            V[X] = V[X] & V[Y];
+            EM_ASM_({ appendLog("Executed: V[" + $0.toString() + "] &= V[" + $1.toString() +
+                                "] (0x" + $2.toString(16).toUpperCase().padStart(2, "0") +
+                                " &= 0x" + $3.toString(16).toUpperCase().padStart(2, "0") +
+                                " => 0x" + $4.toString(16).toUpperCase().padStart(2, "0") + ")"); }, X, Y, oldVX, V[Y], V[X]);
+            PC += 2;
+            break;
+        }
+        case 0x0003: // 0x8XY3 - Set V[X] = V[X] ^ V[Y]
+        {
+            uint8_t X = (opcode & 0x0F00) >> 8; // extract X
+            uint8_t Y = (opcode & 0x00F0) >> 4; // extract Y
+            uint8_t oldVX = V[X];
+            V[X] = V[X] ^ V[Y];
+            EM_ASM_({ appendLog("Executed: V[" + $0.toString() + "] ^= V[" + $1.toString() + "] (0x" +
+                                $2.toString(16).toUpperCase().padStart(2, '0') + " ^= 0x" +
+                                $3.toString(16).toUpperCase().padStart(2, '0') + " => 0x" +
+                                $4.toString(16).toUpperCase().padStart(2, '0') + ")"); }, X, Y, oldVX, V[Y], V[X]);
+            PC += 2;
+            break;
+        }
         default:
         {
             PC += 2;
@@ -243,7 +273,9 @@ void Chip8::executeOpcode(uint16_t opcode)
             for (int col = 0; col < 8; col++)
             {
                 uint8_t pixel = (spriteByte >> (7 - col)) & 1;      // Extract individual pixel
-                int screenIndex = (yPos + row) * 64 + (xPos + col); // Map (x,y) to 1D array
+                int drawX = (xPos + col) % 64;
+                int drawY = (yPos + row) % 32;
+                int screenIndex = drawY * 64 + drawX;
                 if (pixel == 1)
                 { // Only XOR if pixel is set
                     if (display[screenIndex] == 1)
