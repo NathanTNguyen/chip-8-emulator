@@ -24,7 +24,7 @@ void Chip8::reset()
     display.fill(0);
     // Reset the stack pointer
     SP = 0;
-    //clear the stack
+    // clear the stack
     stack.fill(0);
     // Log the reset action
     EM_ASM({
@@ -241,6 +241,69 @@ void Chip8::executeOpcode(uint16_t opcode)
             PC += 2;
             break;
         }
+        case 0x0004: // 0x8XY4 - Perform V[X] = V[X] + V[Y]
+        {
+            uint8_t X = (opcode & 0x0F00) >> 8; // extract X
+            uint8_t Y = (opcode & 0x00F0) >> 4; // extract Y
+            uint8_t oldVX = V[X];               // store old V[X] for logging
+
+            uint16_t sum = V[X] + V[Y];
+
+            if (sum > 0xFF)
+            {
+                V[0xF] = 0x1; // if sum is over 0xFF (255) we store 1 in the carry flag V[0xF]
+            }
+            else
+            {
+                V[0xF] = 0x0; // else we simply store 0
+            }
+            V[X] = (sum & 0xFF); // store the lower 8 bits in V[X]
+            EM_ASM_({ appendLog("Executed: V[" + $0.toString() + "] = V[" + $0.toString() + "] + V[" + $1.toString() +
+                                "] (0x" + $2.toString(16).toUpperCase().padStart(2, "0") +
+                                " + 0x" + $3.toString(16).toUpperCase().padStart(2, "0") +
+                                " = 0x" + $4.toString(16).toUpperCase().padStart(3, "0") +
+                                ", carry=" + $5.toString() +
+                                ") => new V[" + $0.toString() + "] = 0x" +
+                                $6.toString(16).toUpperCase().padStart(2, "0")); }, X, Y, oldVX, V[Y], sum, V[0xF], V[X]);
+            PC += 2;
+            break;
+        }
+        case 0x0005: // 0x8XY5 - Perform V[X] = V[X] - V[Y]
+        {
+            uint8_t X = (opcode & 0x0F00) >> 8; // extract X
+            uint8_t Y = (opcode & 0x00F0) >> 4; // extract Y
+            uint8_t oldVX = V[X];               // store old V[X] for logging
+
+            if (V[X] >= V[Y]) // if V[X] is >= V[Y] set carry flag (V[F]) to 1 else 0
+            {
+                V[0xF] = 0x1;
+            }
+            else
+            {
+                V[0xF] = 0x0;
+            }
+            V[X] = V[X] - V[Y]; // perform the subtraction
+            EM_ASM_({ appendLog("Executed: V[" + $0.toString() + "] -= V[" + $1.toString() +
+                                "] (0x" + $2.toString(16).toUpperCase().padStart(2, '0') +
+                                " - 0x" + $3.toString(16).toUpperCase().padStart(2, '0') +
+                                " = 0x" + $4.toString(16).toUpperCase().padStart(2, '0') +
+                                ", VF=" + $5.toString() + ")"); }, X, Y, oldVX, V[Y], V[X], V[0xF]);
+            PC += 2;
+            break;
+        }
+        case 0x0006: // store LSB in V[F] and shift V[X] right by one
+        {
+            uint8_t X = (opcode & 0x0F00) >> 8;
+            uint8_t oldVX = V[X];
+            V[0xF] = (V[X] & 0x01); // store least significant bit in V[F]
+            V[X] = V[X] >> 1;       // shift V[X] right by 1
+            EM_ASM_({ appendLog("Executed: V[" + $0.toString() + "] >> 1 (0x" +
+                                $1.toString(16).toUpperCase().padStart(2, '0') + " >> 1 = 0x" +
+                                $2.toString(16).toUpperCase().padStart(2, '0') +
+                                ", LSB = " + $3.toString() + ")"); }, X, oldVX, V[X], V[0xF]);
+            PC += 2;
+            break;
+        }
         default:
         {
             PC += 2;
@@ -272,7 +335,7 @@ void Chip8::executeOpcode(uint16_t opcode)
             uint8_t spriteByte = memory[I + row]; // Get sprite row from memory
             for (int col = 0; col < 8; col++)
             {
-                uint8_t pixel = (spriteByte >> (7 - col)) & 1;      // Extract individual pixel
+                uint8_t pixel = (spriteByte >> (7 - col)) & 1; // Extract individual pixel
                 int drawX = (xPos + col) % 64;
                 int drawY = (yPos + row) % 32;
                 int screenIndex = drawY * 64 + drawX;
