@@ -304,10 +304,67 @@ void Chip8::executeOpcode(uint16_t opcode)
             PC += 2;
             break;
         }
+        case 0x0007: // perform V[X] = V[Y] - V[X], setting V[F] accordingly
+        {
+            uint8_t X = (opcode & 0x0F00) >> 8;
+            uint8_t Y = (opcode & 0x00F0) >> 4;
+            uint8_t oldVX = V[X]; // store old V[X] and V[Y] for logging
+            uint8_t oldVY = V[Y];
+            if (V[Y] >= V[X])
+            {
+                V[0xF] = 0x1; // no borrow occured, set V[F] to 1
+            }
+            else
+            {
+                V[0xF] = 0x0; // borrow occured, set V[F] to 0
+            }
+            V[X] = V[Y] - V[X]; // perform the substraction
+            EM_ASM_({ appendLog("Executed: V[" + $0.toString() + "] = V[" + $1.toString() +
+                                "] - V[" + $0.toString() + "] (0x" +
+                                $2.toString(16).toUpperCase().padStart(2, '0') +
+                                " - 0x" + $3.toString(16).toUpperCase().padStart(2, '0') +
+                                " = 0x" + $4.toString(16).toUpperCase().padStart(2, '0') +
+                                "), VF = " + $5.toString()); }, X, Y, oldVY, oldVX, V[X], V[0xF]);
+            PC += 2;
+            break;
+        }
+        case 0x000E: // store MSB in V[F] and left shift V[X]
+        {
+            uint8_t X = (opcode & 0x0F00) >> 8;
+            uint8_t oldVX = V[X];
+            V[0xF] = (V[X] & 0x80) >> 7; // in a 8 bit (e.g. 10000000) value the MSB is in the 0x80 position (i.e. performing this results in 00000001 if V[X] was 10000000)
+            V[X] = V[X] << 1;            // left shift V[X] by 1
+            EM_ASM_({ appendLog("Executed: V[" + $0.toString() + "] << 1 (0x" +
+                                $1.toString(16).toUpperCase().padStart(2, '0') +
+                                " << 1 = 0x" + $2.toString(16).toUpperCase().padStart(2, '0') +
+                                ", MSB = " + $3.toString() + ")"); }, X, oldVX, V[X], V[0xF]);
+            PC += 2;
+            break;
+        }
         default:
         {
             PC += 2;
         }
+        }
+        break;
+    }
+    case 0x9000: // skip next instruction if V[X] != V[Y]
+    {
+        uint8_t X = (opcode & 0x0F00) >> 8;
+        uint8_t Y = (opcode & 0x00F0) >> 4;
+        if (V[X] != V[Y])
+        {
+            PC += 4;
+            EM_ASM_({ appendLog("Executed: Skip next instruction because V[" + $0.toString() + "] (0x" +
+                                $1.toString(16).toUpperCase().padStart(2, "0") + ") != V[" + $2.toString() +
+                                "] (0x" + $3.toString(16).toUpperCase().padStart(2, "0") + ")"); }, X, V[X], Y, V[Y]);
+        }
+        else
+        {
+            EM_ASM_({ appendLog("Executed: No skip because V[" + $0.toString() + "] (0x" +
+                                $1.toString(16).toUpperCase().padStart(2, "0") + ") == V[" + $2.toString() +
+                                "] (0x" + $3.toString(16).toUpperCase().padStart(2, "0") + ")"); }, X, V[X], Y, V[Y]);
+            PC += 2;
         }
         break;
     }
