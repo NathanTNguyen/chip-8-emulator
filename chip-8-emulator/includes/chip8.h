@@ -19,6 +19,7 @@ class Chip8 {
         uint16_t I; //index register (for storing memory addresses)
         std::array<uint8_t, 64 * 32> display{};
         std::array<uint8_t, 16> V{}; //chip-8 has 16 registers (V0 through to VF)
+        std::array<uint8_t, 16> keys{}; // chip-8 has 16 keys
         std::array<uint8_t, 16> stack; //stacks in chip-8 typically 16 levels deep
         uint8_t SP = 0; //stack pointer, initialise at 0
 };

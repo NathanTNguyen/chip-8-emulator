@@ -31,7 +31,7 @@ if (ENVIRONMENT_IS_NODE) {
 
 // --pre-jses are emitted after the Module integration code, so that they can
 // refer to Module (if they choose; they can also define Module)
-// include: C:\Users\ALLIED~1\AppData\Local\Temp\tmp_d3p_y1_.js
+// include: C:\Users\ALLIED~1\AppData\Local\Temp\tmpd75bizeu.js
 
   Module['expectedDataFileDownloads'] ??= 0;
   Module['expectedDataFileDownloads']++;
@@ -212,21 +212,21 @@ Module['FS_createPath']("/", "roms", true, true);
 
   })();
 
-// end include: C:\Users\ALLIED~1\AppData\Local\Temp\tmp_d3p_y1_.js
-// include: C:\Users\ALLIED~1\AppData\Local\Temp\tmpwctbapt9.js
+// end include: C:\Users\ALLIED~1\AppData\Local\Temp\tmpd75bizeu.js
+// include: C:\Users\ALLIED~1\AppData\Local\Temp\tmp5c2kba2w.js
 
     // All the pre-js content up to here must remain later on, we need to run
     // it.
     if (Module['$ww'] || (typeof ENVIRONMENT_IS_PTHREAD != 'undefined' && ENVIRONMENT_IS_PTHREAD)) Module['preRun'] = [];
     var necessaryPreJSTasks = Module['preRun'].slice();
-  // end include: C:\Users\ALLIED~1\AppData\Local\Temp\tmpwctbapt9.js
-// include: C:\Users\ALLIED~1\AppData\Local\Temp\tmp_pqmtoun.js
+  // end include: C:\Users\ALLIED~1\AppData\Local\Temp\tmp5c2kba2w.js
+// include: C:\Users\ALLIED~1\AppData\Local\Temp\tmppv1sb7gj.js
 
     if (!Module['preRun']) throw 'Module.preRun should exist because file support used it; did a pre-js delete it?';
     necessaryPreJSTasks.forEach((task) => {
       if (Module['preRun'].indexOf(task) < 0) throw 'All preRun tasks that exist before user pre-js code should remain after; did you replace Module or modify Module.preRun?';
     });
-  // end include: C:\Users\ALLIED~1\AppData\Local\Temp\tmp_pqmtoun.js
+  // end include: C:\Users\ALLIED~1\AppData\Local\Temp\tmppv1sb7gj.js
 
 
 // Sometimes an existing Module object exists with properties
@@ -1040,38 +1040,45 @@ async function createWasm() {
 // === Body ===
 
 var ASM_CONSTS = {
-  67956: () => { appendLog("Chip-8 state has been reset"); },  
- 68002: () => { appendLog("ERROR: ROM is too large!!"); },  
- 68046: ($0) => { appendLog("Loaded ROM successfully (" + $0.toString() + " bytes)"); },  
- 68118: ($0) => { var hexOpcode = ("0000" + $0.toString(16)).slice(-4); appendLog("Fetched opcode: 0x" + hexOpcode); },  
- 68221: () => { appendLog("Executed: Clear Screen (0x00E0)"); },  
- 68271: () => { appendLog("ERROR: Stack underflow on 0x00EE!!!") },  
- 68322: ($0) => { var hexAddr = ("000" + $0.toString(16)).slice(-3); appendLog("Executed: Return from subroutine (0x00EE), jumping to 0x" + hexAddr); },  
- 68457: ($0) => { var hexAddr = ("000" + $0.toString(16)).slice(-3); appendLog("Executed: Jump to address 0x" + hexAddr); },  
- 68565: () => { appendLog("ERROR: Stack overflow on 0x2NNN!!!") },  
- 68615: ($0) => { var hexAddr = ("000" + $0.toString(16)).slice(-3); appendLog("Executed: Call subroutine at 0x" + hexAddr); },  
- 68725: ($0, $1) => { appendLog("Executed: Skip next instruction because V" + $0.toString() + " equals 0x" + ($1.toString(16).toUpperCase().padStart(2, "0"))); },  
- 68867: ($0, $1) => { appendLog("Executed: No skip because V" + $0.toString() + " does not equal 0x" + ($1.toString(16).toUpperCase().padStart(2, "0"))); },  
- 69003: ($0, $1) => { appendLog("Executed: Skip next instruction because V" + $0.toString() + " not equals 0x" + ($1.toString(16).toUpperCase().padStart(2, "0"))); },  
- 69149: ($0, $1) => { appendLog("Executed: No skip because V" + $0.toString() + " equals 0x" + ($1.toString(16).toUpperCase().padStart(2, "0"))); },  
- 69277: ($0, $1, $2) => { appendLog("Executed: Skip because V[" + $0.toString() + "]" + " equals V[" + $1.toString() + "]" + " and opcode ended in " + $2.toString()); },  
- 69422: ($0, $1, $2) => { appendLog("Executed: No skip because V[" + $0.toString() + "]" + " does not equal V[" + $1.toString() + "]" + " or opcode did not end in " + $2.toString()); },  
- 69583: ($0, $1) => { appendLog("Executed: Set V" + $0.toString() + " = 0x" + ($1.toString(16).toUpperCase().padStart(2, "0"))); },  
- 69694: ($0, $1, $2) => { appendLog("Executed: V" + $0.toString() + " += 0x" + ($1.toString(16).toUpperCase().padStart(2, "0")) + " (New V" + $0.toString() + " = 0x" + ($2.toString(16).toUpperCase().padStart(2, "0")) + ")"); },  
- 69897: ($0, $1, $2, $3) => { appendLog("Executed: V[" + $0.toString() + "] = V[" + $1.toString() + "] (" + "0x" + $2.toString(16).toUpperCase().padStart(2, "0") + " = " + "0x" + $3.toString(16).toUpperCase().padStart(2, "0") + ")"); },  
- 70105: ($0, $1, $2, $3, $4) => { appendLog("Executed: V[" + $0.toString() + "] |= V[" + $1.toString() + "] (0x" + $2.toString(16).toUpperCase().padStart(2, "0") + " |= 0x" + $3.toString(16).toUpperCase().padStart(2, "0") + " => 0x" + $4.toString(16).toUpperCase().padStart(2, "0") + ")"); },  
- 70365: ($0, $1, $2, $3, $4) => { appendLog("Executed: V[" + $0.toString() + "] &= V[" + $1.toString() + "] (0x" + $2.toString(16).toUpperCase().padStart(2, "0") + " &= 0x" + $3.toString(16).toUpperCase().padStart(2, "0") + " => 0x" + $4.toString(16).toUpperCase().padStart(2, "0") + ")"); },  
- 70625: ($0, $1, $2, $3, $4) => { appendLog("Executed: V[" + $0.toString() + "] ^= V[" + $1.toString() + "] (0x" + $2.toString(16).toUpperCase().padStart(2, '0') + " ^= 0x" + $3.toString(16).toUpperCase().padStart(2, '0') + " => 0x" + $4.toString(16).toUpperCase().padStart(2, '0') + ")"); },  
- 70885: ($0, $1, $2, $3, $4, $5, $6) => { appendLog("Executed: V[" + $0.toString() + "] = V[" + $0.toString() + "] + V[" + $1.toString() + "] (0x" + $2.toString(16).toUpperCase().padStart(2, "0") + " + 0x" + $3.toString(16).toUpperCase().padStart(2, "0") + " = 0x" + $4.toString(16).toUpperCase().padStart(3, "0") + ", carry=" + $5.toString() + ") => new V[" + $0.toString() + "] = 0x" + $6.toString(16).toUpperCase().padStart(2, "0")); },  
- 71284: ($0, $1, $2, $3, $4, $5) => { appendLog("Executed: V[" + $0.toString() + "] -= V[" + $1.toString() + "] (0x" + $2.toString(16).toUpperCase().padStart(2, '0') + " - 0x" + $3.toString(16).toUpperCase().padStart(2, '0') + " = 0x" + $4.toString(16).toUpperCase().padStart(2, '0') + ", VF=" + $5.toString() + ")"); },  
- 71568: ($0, $1, $2, $3) => { appendLog("Executed: V[" + $0.toString() + "] >> 1 (0x" + $1.toString(16).toUpperCase().padStart(2, '0') + " >> 1 = 0x" + $2.toString(16).toUpperCase().padStart(2, '0') + ", LSB = " + $3.toString() + ")"); },  
- 71778: ($0, $1, $2, $3, $4, $5) => { appendLog("Executed: V[" + $0.toString() + "] = V[" + $1.toString() + "] - V[" + $0.toString() + "] (0x" + $2.toString(16).toUpperCase().padStart(2, '0') + " - 0x" + $3.toString(16).toUpperCase().padStart(2, '0') + " = 0x" + $4.toString(16).toUpperCase().padStart(2, '0') + "), VF = " + $5.toString()); },  
- 72085: ($0, $1, $2, $3) => { appendLog("Executed: V[" + $0.toString() + "] << 1 (0x" + $1.toString(16).toUpperCase().padStart(2, '0') + " << 1 = 0x" + $2.toString(16).toUpperCase().padStart(2, '0') + ", MSB = " + $3.toString() + ")"); },  
- 72295: ($0, $1, $2, $3) => { appendLog("Executed: Skip next instruction because V[" + $0.toString() + "] (0x" + $1.toString(16).toUpperCase().padStart(2, "0") + ") != V[" + $2.toString() + "] (0x" + $3.toString(16).toUpperCase().padStart(2, "0") + ")"); },  
- 72524: ($0, $1, $2, $3) => { appendLog("Executed: No skip because V[" + $0.toString() + "] (0x" + $1.toString(16).toUpperCase().padStart(2, "0") + ") == V[" + $2.toString() + "] (0x" + $3.toString(16).toUpperCase().padStart(2, "0") + ")"); },  
- 72739: ($0) => { var hexI = ("000" + $0.toString(16)).slice(-3); appendLog("Executed: Set I = 0x" + hexI); },  
- 72833: ($0, $1, $2) => { appendLog("Executed: Draw sprite at (V" + $0.toString() + ", V" + $1.toString() + ") with height " + $2.toString()); },  
- 72954: () => { appendLog("Executed: Unknown opcode encountered."); }
+  67972: () => { appendLog("Chip-8 state has been reset"); },  
+ 68018: () => { appendLog("ERROR: ROM is too large!!"); },  
+ 68062: ($0) => { appendLog("Loaded ROM successfully (" + $0.toString() + " bytes)"); },  
+ 68134: ($0) => { var hexOpcode = ("0000" + $0.toString(16)).slice(-4); appendLog("Fetched opcode: 0x" + hexOpcode); },  
+ 68237: () => { appendLog("Executed: Clear Screen (0x00E0)"); },  
+ 68287: () => { appendLog("ERROR: Stack underflow on 0x00EE!!!") },  
+ 68338: ($0) => { var hexAddr = ("000" + $0.toString(16)).slice(-3); appendLog("Executed: Return from subroutine (0x00EE), jumping to 0x" + hexAddr); },  
+ 68473: ($0) => { var hexAddr = ("000" + $0.toString(16)).slice(-3); appendLog("Executed: Jump to address 0x" + hexAddr); },  
+ 68581: () => { appendLog("ERROR: Stack overflow on 0x2NNN!!!") },  
+ 68631: ($0) => { var hexAddr = ("000" + $0.toString(16)).slice(-3); appendLog("Executed: Call subroutine at 0x" + hexAddr); },  
+ 68741: ($0, $1) => { appendLog("Executed: Skip next instruction because V" + $0.toString() + " equals 0x" + ($1.toString(16).toUpperCase().padStart(2, "0"))); },  
+ 68883: ($0, $1) => { appendLog("Executed: No skip because V" + $0.toString() + " does not equal 0x" + ($1.toString(16).toUpperCase().padStart(2, "0"))); },  
+ 69019: ($0, $1) => { appendLog("Executed: Skip next instruction because V" + $0.toString() + " not equals 0x" + ($1.toString(16).toUpperCase().padStart(2, "0"))); },  
+ 69165: ($0, $1) => { appendLog("Executed: No skip because V" + $0.toString() + " equals 0x" + ($1.toString(16).toUpperCase().padStart(2, "0"))); },  
+ 69293: ($0, $1, $2) => { appendLog("Executed: Skip because V[" + $0.toString() + "]" + " equals V[" + $1.toString() + "]" + " and opcode ended in " + $2.toString()); },  
+ 69438: ($0, $1, $2) => { appendLog("Executed: No skip because V[" + $0.toString() + "]" + " does not equal V[" + $1.toString() + "]" + " or opcode did not end in " + $2.toString()); },  
+ 69599: ($0, $1) => { appendLog("Executed: Set V" + $0.toString() + " = 0x" + ($1.toString(16).toUpperCase().padStart(2, "0"))); },  
+ 69710: ($0, $1, $2) => { appendLog("Executed: V" + $0.toString() + " += 0x" + ($1.toString(16).toUpperCase().padStart(2, "0")) + " (New V" + $0.toString() + " = 0x" + ($2.toString(16).toUpperCase().padStart(2, "0")) + ")"); },  
+ 69913: ($0, $1, $2, $3) => { appendLog("Executed: V[" + $0.toString() + "] = V[" + $1.toString() + "] (" + "0x" + $2.toString(16).toUpperCase().padStart(2, "0") + " = " + "0x" + $3.toString(16).toUpperCase().padStart(2, "0") + ")"); },  
+ 70121: ($0, $1, $2, $3, $4) => { appendLog("Executed: V[" + $0.toString() + "] |= V[" + $1.toString() + "] (0x" + $2.toString(16).toUpperCase().padStart(2, "0") + " |= 0x" + $3.toString(16).toUpperCase().padStart(2, "0") + " => 0x" + $4.toString(16).toUpperCase().padStart(2, "0") + ")"); },  
+ 70381: ($0, $1, $2, $3, $4) => { appendLog("Executed: V[" + $0.toString() + "] &= V[" + $1.toString() + "] (0x" + $2.toString(16).toUpperCase().padStart(2, "0") + " &= 0x" + $3.toString(16).toUpperCase().padStart(2, "0") + " => 0x" + $4.toString(16).toUpperCase().padStart(2, "0") + ")"); },  
+ 70641: ($0, $1, $2, $3, $4) => { appendLog("Executed: V[" + $0.toString() + "] ^= V[" + $1.toString() + "] (0x" + $2.toString(16).toUpperCase().padStart(2, '0') + " ^= 0x" + $3.toString(16).toUpperCase().padStart(2, '0') + " => 0x" + $4.toString(16).toUpperCase().padStart(2, '0') + ")"); },  
+ 70901: ($0, $1, $2, $3, $4, $5, $6) => { appendLog("Executed: V[" + $0.toString() + "] = V[" + $0.toString() + "] + V[" + $1.toString() + "] (0x" + $2.toString(16).toUpperCase().padStart(2, "0") + " + 0x" + $3.toString(16).toUpperCase().padStart(2, "0") + " = 0x" + $4.toString(16).toUpperCase().padStart(3, "0") + ", carry=" + $5.toString() + ") => new V[" + $0.toString() + "] = 0x" + $6.toString(16).toUpperCase().padStart(2, "0")); },  
+ 71300: ($0, $1, $2, $3, $4, $5) => { appendLog("Executed: V[" + $0.toString() + "] -= V[" + $1.toString() + "] (0x" + $2.toString(16).toUpperCase().padStart(2, '0') + " - 0x" + $3.toString(16).toUpperCase().padStart(2, '0') + " = 0x" + $4.toString(16).toUpperCase().padStart(2, '0') + ", VF=" + $5.toString() + ")"); },  
+ 71584: ($0, $1, $2, $3) => { appendLog("Executed: V[" + $0.toString() + "] >> 1 (0x" + $1.toString(16).toUpperCase().padStart(2, '0') + " >> 1 = 0x" + $2.toString(16).toUpperCase().padStart(2, '0') + ", LSB = " + $3.toString() + ")"); },  
+ 71794: ($0, $1, $2, $3, $4, $5) => { appendLog("Executed: V[" + $0.toString() + "] = V[" + $1.toString() + "] - V[" + $0.toString() + "] (0x" + $2.toString(16).toUpperCase().padStart(2, '0') + " - 0x" + $3.toString(16).toUpperCase().padStart(2, '0') + " = 0x" + $4.toString(16).toUpperCase().padStart(2, '0') + "), VF = " + $5.toString()); },  
+ 72101: ($0, $1, $2, $3) => { appendLog("Executed: V[" + $0.toString() + "] << 1 (0x" + $1.toString(16).toUpperCase().padStart(2, '0') + " << 1 = 0x" + $2.toString(16).toUpperCase().padStart(2, '0') + ", MSB = " + $3.toString() + ")"); },  
+ 72311: ($0, $1, $2, $3) => { appendLog("Executed: Skip next instruction because V[" + $0.toString() + "] (0x" + $1.toString(16).toUpperCase().padStart(2, "0") + ") != V[" + $2.toString() + "] (0x" + $3.toString(16).toUpperCase().padStart(2, "0") + ")"); },  
+ 72540: ($0, $1, $2, $3) => { appendLog("Executed: No skip because V[" + $0.toString() + "] (0x" + $1.toString(16).toUpperCase().padStart(2, "0") + ") == V[" + $2.toString() + "] (0x" + $3.toString(16).toUpperCase().padStart(2, "0") + ")"); },  
+ 72755: ($0) => { var hexI = ("000" + $0.toString(16)).slice(-3); appendLog("Executed: Set I = 0x" + hexI); },  
+ 72849: ($0) => { var hexAddr = ("000" + $0.toString(16)).slice(-3); appendLog("Executed: Jump to address 0x" + hexAddr + " (NNN + V[0])"); },  
+ 72975: ($0, $1, $2, $3) => { appendLog("Executed: V[" + $0.toString() + "] = Random(0x" + $1.toString(16).toUpperCase().padStart(2, '0') + ") & 0x" + $2.toString(16).toUpperCase().padStart(2, '0') + " = 0x" + $3.toString(16).toUpperCase().padStart(2, '0')); },  
+ 73208: ($0, $1, $2) => { appendLog("Executed: Draw sprite at (V" + $0.toString() + ", V" + $1.toString() + ") with height " + $2.toString()); },  
+ 73329: ($0, $1) => { appendLog("Executed: Skip next instruction because key for V[" + $0.toString() + "] (key value: 0x" + $1.toString(16).toUpperCase().padStart(1, '0') + ") is pressed."); },  
+ 73502: ($0, $1) => { appendLog("Executed: No skip because key for V[" + $0.toString() + "] (key value: 0x" + $1.toString(16).toUpperCase().padStart(1, '0') + ") is not pressed."); },  
+ 73665: ($0, $1) => { appendLog("Executed: Skip next instruction because key for V[" + $0.toString() + "] (key value: 0x" + $1.toString(16).toUpperCase().padStart(1, '0') + ") is not pressed."); },  
+ 73842: ($0, $1) => { appendLog("Executed: No skip because key for V[" + $0.toString() + "] (key value: 0x" + $1.toString(16).toUpperCase().padStart(1, '0') + ") is pressed."); },  
+ 74001: ($0, $1, $2, $3) => { appendLog("Executed: I = I + V[" + $0.toString() + "] (0x" + $1.toString(16).toUpperCase().padStart(3, '0') + " + 0x" + $2.toString(16).toUpperCase().padStart(2, '0') + " = 0x" + $3.toString(16).toUpperCase().padStart(3, '0') + ")"); },  
+ 74239: () => { appendLog("Executed: Unknown opcode encountered."); }
 };
 
 // end include: preamble.js
@@ -1199,6 +1206,8 @@ var ASM_CONSTS = {
   var _emscripten_asm_const_int = (code, sigPtr, argbuf) => {
       return runEmAsmFunction(code, sigPtr, argbuf);
     };
+
+  var _emscripten_date_now = () => Date.now();
 
   var getHeapMax = () =>
       HEAPU8.length;
@@ -4182,6 +4191,8 @@ var wasmImports = {
   _abort_js: __abort_js,
   /** @export */
   emscripten_asm_const_int: _emscripten_asm_const_int,
+  /** @export */
+  emscripten_date_now: _emscripten_date_now,
   /** @export */
   emscripten_resize_heap: _emscripten_resize_heap,
   /** @export */

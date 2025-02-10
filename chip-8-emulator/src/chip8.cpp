@@ -4,10 +4,12 @@
 #include <iomanip>
 #include <algorithm>
 #include <emscripten.h>
+#include <cstdlib>
 
 Chip8::Chip8()
 {
-    PC = 0x200; // programs start at memory address 0x200
+    srand(time(0)); // seed the random number generator
+    PC = 0x200;     // programs start at memory address 0x200
 }
 
 void Chip8::reset()
@@ -378,6 +380,29 @@ void Chip8::executeOpcode(uint16_t opcode)
         PC += 2;
         break;
     }
+    case 0xB000:
+    {                                      // 0xBNNN - set PC to NNN + V[0]
+        uint16_t NNN = opcode & 0x0FFF;    // extract NNN
+        uint16_t jumpAddress = NNN + V[0]; // Calculate jump address
+        EM_ASM_({
+        var hexAddr = ("000" + $0.toString(16)).slice(-3);
+        appendLog("Executed: Jump to address 0x" + hexAddr + " (NNN + V[0])"); }, jumpAddress);
+        PC = jumpAddress; // Set PC to NNN + V[0]
+        break;
+    }
+    case 0xC000:
+    { // 0xCXNN - Set V[X] = rand() & NN
+        uint8_t X = (opcode & 0x0F00) >> 8;
+        uint8_t NN = opcode & 0x00FF;
+        uint8_t rnd = rand() % 256; // generate random 8-bit value (0 to 255)
+        V[X] = rnd & NN;            // performn bitwise AND with NN and store in V[X]
+        EM_ASM_({ appendLog("Executed: V[" + $0.toString() + "] = Random(0x" +
+                            $1.toString(16).toUpperCase().padStart(2, '0') +
+                            ") & 0x" + $2.toString(16).toUpperCase().padStart(2, '0') +
+                            " = 0x" + $3.toString(16).toUpperCase().padStart(2, '0')); }, X, rnd, NN, V[X]);
+        PC += 2;
+        break;
+    }
     case 0xD000:
     {                                       // 0xDXYN - Draw sprite at (VX, VY) with height N
         uint8_t X = (opcode & 0x0F00) >> 8; // Extract X
@@ -408,6 +433,78 @@ void Chip8::executeOpcode(uint16_t opcode)
         }
         EM_ASM_({ appendLog("Executed: Draw sprite at (V" + $0.toString() + ", V" + $1.toString() + ") with height " + $2.toString()); }, X, Y, N);
         PC += 2;
+        break;
+    }
+    case 0xE000:
+    {
+        uint8_t X = (opcode & 0x0F00) >> 8;
+        switch (opcode & 0x00FF)
+        {
+        case 0x009E:
+        { // 0xEX9E - Skip next instruction if V[X] is pressed
+            if (keys[V[X]] != 0)
+            {
+                EM_ASM_({ appendLog("Executed: Skip next instruction because key for V[" + $0.toString() +
+                                    "] (key value: 0x" + $1.toString(16).toUpperCase().padStart(1, '0') + ") is pressed."); }, X, V[X]);
+                PC += 4;
+            }
+            else
+            {
+                EM_ASM_({ appendLog("Executed: No skip because key for V[" + $0.toString() +
+                                    "] (key value: 0x" + $1.toString(16).toUpperCase().padStart(1, '0') + ") is not pressed."); }, X, V[X]);
+                PC += 2;
+            }
+            break;
+        }
+        case 0x00A1:
+        { // 0x8XA1 - Skip next instruction if V[X] is not pressed
+            if (keys[V[X]] == 0)
+            {
+                EM_ASM_({ appendLog("Executed: Skip next instruction because key for V[" + $0.toString() +
+                                    "] (key value: 0x" + $1.toString(16).toUpperCase().padStart(1, '0') +
+                                    ") is not pressed."); }, X, V[X]);
+
+                PC += 4;
+            }
+            else
+            {
+                EM_ASM_({ appendLog("Executed: No skip because key for V[" + $0.toString() +
+                                    "] (key value: 0x" + $1.toString(16).toUpperCase().padStart(1, '0') +
+                                    ") is pressed."); }, X, V[X]);
+                PC += 2;
+            }
+            break;
+        }
+        default:
+        {
+            PC += 2;
+            break;
+        }
+        }
+        break;
+    }
+    case 0xF000:
+    {
+        switch (opcode & 0x00FF)
+        {
+        case 0x001E:
+        { // 0xFX1E - Add V[X] to I
+            uint8_t X = (opcode & 0x0F00) >> 8;
+            uint16_t oldI = I;
+            I += V[X]; // perform addition
+            EM_ASM_({ appendLog("Executed: I = I + V[" + $0.toString() +
+                                "] (0x" + $1.toString(16).toUpperCase().padStart(3, '0') +
+                                " + 0x" + $2.toString(16).toUpperCase().padStart(2, '0') +
+                                " = 0x" + $3.toString(16).toUpperCase().padStart(3, '0') + ")"); }, X, oldI, V[X], I);
+            PC += 2;
+            break;
+        }
+        default:
+        {
+            PC += 2;
+            break;
+        }
+        }
         break;
     }
     default:
