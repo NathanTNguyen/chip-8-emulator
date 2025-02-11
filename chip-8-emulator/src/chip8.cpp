@@ -6,10 +6,35 @@
 #include <emscripten.h>
 #include <cstdlib>
 
+const uint16_t FONT_START_ADDRESS = 0x50;
+const uint8_t chip8_fontset[80] = {
+    0xF0, 0x90, 0x90, 0x90, 0xF0, // 0
+    0x20, 0x60, 0x20, 0x20, 0x70, // 1
+    0xF0, 0x10, 0xF0, 0x80, 0xF0, // 2
+    0xF0, 0x10, 0xF0, 0x10, 0xF0, // 3
+    0x90, 0x90, 0xF0, 0x10, 0x10, // 4
+    0xF0, 0x80, 0xF0, 0x10, 0xF0, // 5
+    0xF0, 0x80, 0xF0, 0x90, 0xF0, // 6
+    0xF0, 0x10, 0x20, 0x40, 0x40, // 7
+    0xF0, 0x90, 0xF0, 0x90, 0xF0, // 8
+    0xF0, 0x90, 0xF0, 0x10, 0xF0, // 9
+    0xF0, 0x90, 0xF0, 0x90, 0x90, // A
+    0xE0, 0x90, 0xE0, 0x90, 0xE0, // B
+    0xF0, 0x80, 0x80, 0x80, 0xF0, // C
+    0xE0, 0x90, 0x90, 0x90, 0xE0, // D
+    0xF0, 0x80, 0xF0, 0x80, 0xF0, // E
+    0xF0, 0x80, 0xF0, 0x80, 0x80  // F
+};
+
 Chip8::Chip8()
 {
     srand(time(0)); // seed the random number generator
     PC = 0x200;     // programs start at memory address 0x200
+    // Load the fontset into memory
+    for (size_t i = 0; i < sizeof(chip8_fontset); i++)
+    {
+        memory[FONT_START_ADDRESS + i] = chip8_fontset[i];
+    }
 }
 
 void Chip8::reset()
@@ -28,10 +53,21 @@ void Chip8::reset()
     SP = 0;
     // clear the stack
     stack.fill(0);
+    // Reload the fontset after clearing memory
+    for (size_t i = 0; i < sizeof(chip8_fontset); i++)
+    {
+        memory[FONT_START_ADDRESS + i] = chip8_fontset[i];
+    }
     // Log the reset action
     EM_ASM({
         appendLog("Chip-8 state has been reset");
     });
+}
+
+void Chip8::setKeyState(uint8_t key, uint8_t state)
+{
+    keys[key] = state; // set the state of the key
+    EM_ASM({ appendLog("Key Press Detected: Key " + $0 + " set to " + $1.toString()); }, key, state);
 }
 
 void Chip8::loadROM(const uint8_t *romData, size_t size)
@@ -81,11 +117,12 @@ void Chip8::executeOpcode(uint16_t opcode)
             if (SP == 0)
             {
                 EM_ASM({appendLog("ERROR: Stack underflow on 0x00EE!!!")});
+                return;
             }
             else
             {
+                PC = stack[SP - 1]; // move the pointer
                 SP--;           // decrement stack pointer
-                PC = stack[SP]; // move the pointer
                 EM_ASM_({var hexAddr = ("000" + $0.toString(16)).slice(-3);
                 appendLog("Executed: Return from subroutine (0x00EE), jumping to 0x" + hexAddr); }, PC);
                 // PC explicity set, exiting early to avoid PC increment
@@ -114,9 +151,10 @@ void Chip8::executeOpcode(uint16_t opcode)
         {
             stack[SP] = PC + 2; // push return address to the stack
             SP++;               // increment stack pointer
-            PC = NNN;           // set the PC to NNN to jump to the subroutine
+            PC = NNN;          // set the PC to NNN to jump to the subroutine
             EM_ASM_({var hexAddr = ("000" + $0.toString(16)).slice(-3);
             appendLog("Executed: Call subroutine at 0x" + hexAddr); }, NNN);
+            break;
         }
         return; // return early since PC is explictly set
     }
@@ -487,6 +525,56 @@ void Chip8::executeOpcode(uint16_t opcode)
     {
         switch (opcode & 0x00FF)
         {
+        case 0x0007:
+        { // 0xFX07 - Set V[X] to current value of delay timer
+            uint8_t X = (opcode & 0x0F00) >> 8;
+            V[X] = delayTimer;
+            EM_ASM_({ appendLog("Executed: V[" + $0.toString() + "] = delayTimer (0x" +
+                                $1.toString(16).toUpperCase().padStart(2, '0') + ")"); }, X, delayTimer);
+            PC += 2;
+            break;
+        }
+        case 0x000A:
+        { // 0xFX0A - Wait for key press, store the key in V[X]
+            bool keyPressed = false;
+            uint8_t X = (opcode & 0x0F00) >> 8;
+            for (uint8_t i = 0; i < keys.size(); i++)
+            {
+                if (keys[i] != 0)
+                {
+                    V[X] = i; // key press detected, storing key index in V[X]
+                    keyPressed = true;
+                    EM_ASM_({ appendLog("Executed: Key press detected - key 0x" +
+                                        $0.toString(16).toUpperCase() +
+                                        " stored in V[" + $1.toString() + "]"); }, i, X);
+                    break;
+                }
+            }
+            if (!keyPressed)
+            {
+                return; // don't increment PC, causing a retry of this opcode
+            }
+            PC += 2;
+            break;
+        }
+        case 0x0015:
+        { // 0xFX15 - Set delay timer to V[X]
+            uint8_t X = (opcode & 0x0F00) >> 8;
+            delayTimer = V[X];
+            EM_ASM_({ appendLog("Executed: delayTimer = V[" + $0.toString() + "] (0x" +
+                                $1.toString(16).toUpperCase().padStart(2, '0') + ")"); }, X, V[X]);
+            PC += 2;
+            break;
+        }
+        case 0x0018:
+        { // 0xFX18 - Set sound timer to V[X]
+            uint8_t X = (opcode & 0x0F00) >> 8;
+            soundTimer = V[X];
+            EM_ASM_({ appendLog("Executed: soundTimer = V[" + $0.toString() + "] (0x" +
+                                $1.toString(16).toUpperCase().padStart(2, '0') + ")"); }, X, V[X]);
+            PC += 2;
+            break;
+        }
         case 0x001E:
         { // 0xFX1E - Add V[X] to I
             uint8_t X = (opcode & 0x0F00) >> 8;
@@ -496,6 +584,58 @@ void Chip8::executeOpcode(uint16_t opcode)
                                 "] (0x" + $1.toString(16).toUpperCase().padStart(3, '0') +
                                 " + 0x" + $2.toString(16).toUpperCase().padStart(2, '0') +
                                 " = 0x" + $3.toString(16).toUpperCase().padStart(3, '0') + ")"); }, X, oldI, V[X], I);
+            PC += 2;
+            break;
+        }
+        case 0x0029:
+        { // 0xFX29 - Set I to the location of the sprite for the digit in V[X]
+            uint8_t X = (opcode & 0x0F00) >> 8;
+            uint8_t digit = V[X];
+            I = FONT_START_ADDRESS + (digit * 5); // each sprite is 5 bytes
+            EM_ASM_({ appendLog("Executed: I = FONT_START_ADDRESS + (V[" + $0.toString() +
+                                "] * 5) (0x" + $1.toString(16).toUpperCase().padStart(3, '0') +
+                                " + (0x" + $2.toString(16).toUpperCase().padStart(2, '0') +
+                                " * 5) = 0x" + $3.toString(16).toUpperCase().padStart(3, '0') + ")"); }, X, FONT_START_ADDRESS, digit, I);
+            PC += 2;
+            break;
+        }
+        case 0x0033:
+        { // 0xFX33 - Store BCD of V[X] in memory at I, I + 1, I + 2
+            uint8_t X = (opcode & 0x0F00) >> 8;
+            uint8_t value = V[X];
+            memory[I] = value / 100;           // hundred digit
+            memory[I + 1] = (value / 10) % 10; // tens digit
+            memory[I + 2] = value % 10;        // ones digit
+            EM_ASM_({ appendLog("Executed: BCD of V[" + $0.toString() +
+                                "] (0x" + $1.toString(16).toUpperCase().padStart(2, '0') +
+                                ") stored at memory[I..I+2] as: hundreds=0x" +
+                                $2.toString(16).toUpperCase().padStart(2, '0') +
+                                ", tens=0x" + $3.toString(16).toUpperCase().padStart(2, '0') +
+                                ", ones=0x" + $4.toString(16).toUpperCase().padStart(2, '0')); }, X, value, memory[I], memory[I + 1], memory[I + 2]);
+            PC += 2;
+            break;
+        }
+        case 0x0055:
+        { // 0xFX55 - Store registers V0 to VX in memory
+            uint8_t X = (opcode & 0x0F00) >> 8;
+            for (uint8_t i = 0; i <= X; i++)
+            {
+                memory[I + i] = V[i];
+            }
+            EM_ASM_({ appendLog("Executed: Loaded registers V0 to V[" + $0.toString() + "] from memory starting at I (0x" +
+                                $1.toString(16).toUpperCase().padStart(3, '0') + ")"); }, X, I);
+            PC += 2;
+            break;
+        }
+        case 0x0065:
+        { // 0xFX65 - Load registers V0 to VX from memory
+            uint8_t X = (opcode & 0x0F00) >> 8;
+            for (uint8_t i = 0; i <= X; i++)
+            {
+                V[i] = memory[I + i];
+            }
+            EM_ASM_({ appendLog("Executed: Loaded registers V0 to V[" + $0.toString() + "] from memory starting at I (0x" +
+                                $1.toString(16).toUpperCase().padStart(3, '0') + ")"); }, X, I);
             PC += 2;
             break;
         }

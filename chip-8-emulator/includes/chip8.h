@@ -12,6 +12,7 @@ class Chip8 {
         void executeOpcode(uint16_t opcode);
         void reset(); // reset the emulator
         uint8_t* getDisplayBuffer();
+        void setKeyState(uint8_t key, uint8_t state);
 
     private:
         std::array<uint8_t, 4096> memory{}; //4kb RAM
@@ -20,8 +21,10 @@ class Chip8 {
         std::array<uint8_t, 64 * 32> display{};
         std::array<uint8_t, 16> V{}; //chip-8 has 16 registers (V0 through to VF)
         std::array<uint8_t, 16> keys{}; // chip-8 has 16 keys
-        std::array<uint8_t, 16> stack; //stacks in chip-8 typically 16 levels deep
+        std::array<uint16_t, 16> stack; //stacks in chip-8 typically 16 levels deep
         uint8_t SP = 0; //stack pointer, initialise at 0
+        uint8_t delayTimer = 0;
+        uint8_t soundTimer = 0;
 };
 
 #endif

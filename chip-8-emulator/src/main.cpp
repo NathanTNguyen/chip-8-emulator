@@ -22,4 +22,8 @@ extern "C" { // Expose to JS
     EMSCRIPTEN_KEEPALIVE void reset() {
         chip8.reset();
     }
+
+    EMSCRIPTEN_KEEPALIVE void setKeyState(uint8_t key, uint8_t state) {
+        chip8.setKeyState(key, state);
+    }
 }
