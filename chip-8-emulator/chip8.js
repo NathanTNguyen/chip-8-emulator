@@ -31,7 +31,7 @@ if (ENVIRONMENT_IS_NODE) {
 
 // --pre-jses are emitted after the Module integration code, so that they can
 // refer to Module (if they choose; they can also define Module)
-// include: C:\Users\ALLIED~1\AppData\Local\Temp\tmpcbyl13y9.js
+// include: C:\Users\ALLIED~1\AppData\Local\Temp\tmpsd_iwcjv.js
 
   Module['expectedDataFileDownloads'] ??= 0;
   Module['expectedDataFileDownloads']++;
@@ -208,25 +208,25 @@ Module['FS_createPath']("/", "roms", true, true);
     }
 
     }
-    loadPackage({"files": [{"filename": "/roms/1-chip8-logo.ch8", "start": 0, "end": 260}, {"filename": "/roms/3-corax+.ch8", "start": 260, "end": 1021}, {"filename": "/roms/4-flags.ch8", "start": 1021, "end": 2062}, {"filename": "/roms/5-quirks.ch8", "start": 2062, "end": 5294}, {"filename": "/roms/Maze [David Winter, 199x].ch8", "start": 5294, "end": 5328}, {"filename": "/roms/Particle Demo [zeroZshadow, 2008].ch8", "start": 5328, "end": 5681}, {"filename": "/roms/Pong (1 player).ch8", "start": 5681, "end": 5927}, {"filename": "/roms/Space Invaders [David Winter].ch8", "start": 5927, "end": 7228}, {"filename": "/roms/ibm-logo.ch8", "start": 7228, "end": 7360}], "remote_package_size": 7360});
+    loadPackage({"files": [{"filename": "/roms/1-chip8-logo.ch8", "start": 0, "end": 260}, {"filename": "/roms/3-corax+.ch8", "start": 260, "end": 1021}, {"filename": "/roms/4-flags.ch8", "start": 1021, "end": 2062}, {"filename": "/roms/5-quirks.ch8", "start": 2062, "end": 5294}, {"filename": "/roms/Astro Dodge Hires [Revival Studios, 2008].ch8", "start": 5294, "end": 6825}, {"filename": "/roms/Breakout (Brix hack) [David Winter, 1997].ch8", "start": 6825, "end": 7105}, {"filename": "/roms/Coin Flipping [Carmelo Cortez, 1978].ch8", "start": 7105, "end": 7213}, {"filename": "/roms/Hi-Lo [Jef Winsor, 1978].ch8", "start": 7213, "end": 7383}, {"filename": "/roms/Maze [David Winter, 199x].ch8", "start": 7383, "end": 7417}, {"filename": "/roms/Particle Demo [zeroZshadow, 2008].ch8", "start": 7417, "end": 7770}, {"filename": "/roms/Pong (1 player).ch8", "start": 7770, "end": 8016}, {"filename": "/roms/Sierpinski [Sergey Naydenov, 2010].ch8", "start": 8016, "end": 8537}, {"filename": "/roms/Space Invaders [David Winter].ch8", "start": 8537, "end": 9838}, {"filename": "/roms/Stars [Sergey Naydenov, 2010].ch8", "start": 9838, "end": 10806}, {"filename": "/roms/Trip8 Demo (2008) [Revival Studios].ch8", "start": 10806, "end": 14009}, {"filename": "/roms/Zero Demo [zeroZshadow, 2007].ch8", "start": 14009, "end": 14153}, {"filename": "/roms/ibm-logo.ch8", "start": 14153, "end": 14285}], "remote_package_size": 14285});
 
   })();
 
-// end include: C:\Users\ALLIED~1\AppData\Local\Temp\tmpcbyl13y9.js
-// include: C:\Users\ALLIED~1\AppData\Local\Temp\tmpydvfrnjj.js
+// end include: C:\Users\ALLIED~1\AppData\Local\Temp\tmpsd_iwcjv.js
+// include: C:\Users\ALLIED~1\AppData\Local\Temp\tmp8j62cba2.js
 
     // All the pre-js content up to here must remain later on, we need to run
     // it.
     if (Module['$ww'] || (typeof ENVIRONMENT_IS_PTHREAD != 'undefined' && ENVIRONMENT_IS_PTHREAD)) Module['preRun'] = [];
     var necessaryPreJSTasks = Module['preRun'].slice();
-  // end include: C:\Users\ALLIED~1\AppData\Local\Temp\tmpydvfrnjj.js
-// include: C:\Users\ALLIED~1\AppData\Local\Temp\tmphu7n08t7.js
+  // end include: C:\Users\ALLIED~1\AppData\Local\Temp\tmp8j62cba2.js
+// include: C:\Users\ALLIED~1\AppData\Local\Temp\tmpw174y1k2.js
 
     if (!Module['preRun']) throw 'Module.preRun should exist because file support used it; did a pre-js delete it?';
     necessaryPreJSTasks.forEach((task) => {
       if (Module['preRun'].indexOf(task) < 0) throw 'All preRun tasks that exist before user pre-js code should remain after; did you replace Module or modify Module.preRun?';
     });
-  // end include: C:\Users\ALLIED~1\AppData\Local\Temp\tmphu7n08t7.js
+  // end include: C:\Users\ALLIED~1\AppData\Local\Temp\tmpw174y1k2.js
 
 
 // Sometimes an existing Module object exists with properties

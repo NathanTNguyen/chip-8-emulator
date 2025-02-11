@@ -32,6 +32,12 @@
             IBM Logo ROM
           </button>
         </li>
+        <li class="mb-2">
+          <button
+            onclick="loadZeroDemo()"
+            class="w-full text-left px-2 py-1 hover:bg-gray-700 rounded"
+          >
+            Zero Demo ROM
       </ul>
     </div>
 
@@ -237,7 +243,7 @@
             if (!running) return;
             Module._emulateCycle();
             render();
-            stepTimeoutId = setTimeout(step, 10);
+            stepTimeoutId = setTimeout(step, 1);
           }
           step();
         };
@@ -308,6 +314,24 @@
         } catch (error) {
           console.error("Error loading Chip-8 Logo ROM:", error);
           appendLog("Error loading Chip-8 Logo ROM: " + error);
+        }
+      }
+
+      async function loadZeroDemo() {
+        try {
+          const reponse = await fetch("roms/Zero Demo [zeroZshadow, 2007].ch8");
+          const arrayBuffer = await reponse.arrayBuffer();
+          const romData = new Uint8Array(arrayBuffer);
+
+          let ptr = Module._malloc(romData.length);
+          Module.HEAPU8.set(romData, ptr);
+          Module._loadROM(ptr, romData.length);
+          Module._free(ptr);
+
+          appendLog("Zero Demo ROM loaded successfully");
+        } catch (error) {
+          console.error("Error loading Zero Demo ROM:", error);
+          appendLog("Error loading Zero Demo ROM: " + error);
         }
       }
     </script>

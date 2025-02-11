@@ -53,6 +53,11 @@ void Chip8::reset()
     SP = 0;
     // clear the stack
     stack.fill(0);
+    //reset timers
+    delayTimer = 0;
+    soundTimer = 0;
+    //reset keys
+    keys.fill(0);
     // Reload the fontset after clearing memory
     for (size_t i = 0; i < sizeof(chip8_fontset); i++)
     {
