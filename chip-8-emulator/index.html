@@ -243,7 +243,7 @@
             if (!running) return;
             Module._emulateCycle();
             render();
-            stepTimeoutId = setTimeout(step, 1);
+            stepTimeoutId = setInterval(step, 1000/60);
           }
           step();
         };
@@ -251,7 +251,7 @@
         window.stopEmulator = function () {
           appendLog("Emulator stopped!");
           running = false;
-          clearTimeout(stepTimeoutId);
+          clearInterval(stepTimeoutId);
           cancelAnimationFrame(animationFrameId);
         };
       };

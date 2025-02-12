@@ -31,7 +31,7 @@ if (ENVIRONMENT_IS_NODE) {
 
 // --pre-jses are emitted after the Module integration code, so that they can
 // refer to Module (if they choose; they can also define Module)
-// include: C:\Users\ALLIED~1\AppData\Local\Temp\tmpsd_iwcjv.js
+// include: C:\Users\ALLIED~1\AppData\Local\Temp\tmpmdlo46dm.js
 
   Module['expectedDataFileDownloads'] ??= 0;
   Module['expectedDataFileDownloads']++;
@@ -208,25 +208,25 @@ Module['FS_createPath']("/", "roms", true, true);
     }
 
     }
-    loadPackage({"files": [{"filename": "/roms/1-chip8-logo.ch8", "start": 0, "end": 260}, {"filename": "/roms/3-corax+.ch8", "start": 260, "end": 1021}, {"filename": "/roms/4-flags.ch8", "start": 1021, "end": 2062}, {"filename": "/roms/5-quirks.ch8", "start": 2062, "end": 5294}, {"filename": "/roms/Astro Dodge Hires [Revival Studios, 2008].ch8", "start": 5294, "end": 6825}, {"filename": "/roms/Breakout (Brix hack) [David Winter, 1997].ch8", "start": 6825, "end": 7105}, {"filename": "/roms/Coin Flipping [Carmelo Cortez, 1978].ch8", "start": 7105, "end": 7213}, {"filename": "/roms/Hi-Lo [Jef Winsor, 1978].ch8", "start": 7213, "end": 7383}, {"filename": "/roms/Maze [David Winter, 199x].ch8", "start": 7383, "end": 7417}, {"filename": "/roms/Particle Demo [zeroZshadow, 2008].ch8", "start": 7417, "end": 7770}, {"filename": "/roms/Pong (1 player).ch8", "start": 7770, "end": 8016}, {"filename": "/roms/Sierpinski [Sergey Naydenov, 2010].ch8", "start": 8016, "end": 8537}, {"filename": "/roms/Space Invaders [David Winter].ch8", "start": 8537, "end": 9838}, {"filename": "/roms/Stars [Sergey Naydenov, 2010].ch8", "start": 9838, "end": 10806}, {"filename": "/roms/Trip8 Demo (2008) [Revival Studios].ch8", "start": 10806, "end": 14009}, {"filename": "/roms/Zero Demo [zeroZshadow, 2007].ch8", "start": 14009, "end": 14153}, {"filename": "/roms/ibm-logo.ch8", "start": 14153, "end": 14285}], "remote_package_size": 14285});
+    loadPackage({"files": [{"filename": "/roms/1-chip8-logo.ch8", "start": 0, "end": 260}, {"filename": "/roms/3-corax+.ch8", "start": 260, "end": 1021}, {"filename": "/roms/4-flags.ch8", "start": 1021, "end": 2062}, {"filename": "/roms/5-quirks.ch8", "start": 2062, "end": 5294}, {"filename": "/roms/Bowling [Gooitzen van der Wal].ch8", "start": 5294, "end": 6488}, {"filename": "/roms/Breakout (Brix hack) [David Winter, 1997].ch8", "start": 6488, "end": 6768}, {"filename": "/roms/Maze [David Winter, 199x].ch8", "start": 6768, "end": 6802}, {"filename": "/roms/Particle Demo [zeroZshadow, 2008].ch8", "start": 6802, "end": 7155}, {"filename": "/roms/Pong (1 player).ch8", "start": 7155, "end": 7401}, {"filename": "/roms/Space Invaders [David Winter].ch8", "start": 7401, "end": 8702}, {"filename": "/roms/Zero Demo [zeroZshadow, 2007].ch8", "start": 8702, "end": 8846}, {"filename": "/roms/c8_test.c8", "start": 8846, "end": 9309}, {"filename": "/roms/ibm-logo.ch8", "start": 9309, "end": 9441}, {"filename": "/roms/test_opcode.ch8", "start": 9441, "end": 9919}], "remote_package_size": 9919});
 
   })();
 
-// end include: C:\Users\ALLIED~1\AppData\Local\Temp\tmpsd_iwcjv.js
-// include: C:\Users\ALLIED~1\AppData\Local\Temp\tmp8j62cba2.js
+// end include: C:\Users\ALLIED~1\AppData\Local\Temp\tmpmdlo46dm.js
+// include: C:\Users\ALLIED~1\AppData\Local\Temp\tmp0p6n6e_x.js
 
     // All the pre-js content up to here must remain later on, we need to run
     // it.
     if (Module['$ww'] || (typeof ENVIRONMENT_IS_PTHREAD != 'undefined' && ENVIRONMENT_IS_PTHREAD)) Module['preRun'] = [];
     var necessaryPreJSTasks = Module['preRun'].slice();
-  // end include: C:\Users\ALLIED~1\AppData\Local\Temp\tmp8j62cba2.js
-// include: C:\Users\ALLIED~1\AppData\Local\Temp\tmpw174y1k2.js
+  // end include: C:\Users\ALLIED~1\AppData\Local\Temp\tmp0p6n6e_x.js
+// include: C:\Users\ALLIED~1\AppData\Local\Temp\tmp_y0y9bsf.js
 
     if (!Module['preRun']) throw 'Module.preRun should exist because file support used it; did a pre-js delete it?';
     necessaryPreJSTasks.forEach((task) => {
       if (Module['preRun'].indexOf(task) < 0) throw 'All preRun tasks that exist before user pre-js code should remain after; did you replace Module or modify Module.preRun?';
     });
-  // end include: C:\Users\ALLIED~1\AppData\Local\Temp\tmpw174y1k2.js
+  // end include: C:\Users\ALLIED~1\AppData\Local\Temp\tmp_y0y9bsf.js
 
 
 // Sometimes an existing Module object exists with properties
@@ -1038,58 +1038,6 @@ async function createWasm() {
 }
 
 // === Body ===
-
-var ASM_CONSTS = {
-  68052: () => { appendLog("Chip-8 state has been reset"); },  
- 68098: ($0, $1) => { appendLog("Key Press Detected: Key " + $0 + " set to " + $1.toString()); },  
- 68175: () => { appendLog("ERROR: ROM is too large!!"); },  
- 68219: ($0) => { appendLog("Loaded ROM successfully (" + $0.toString() + " bytes)"); },  
- 68291: ($0) => { var hexOpcode = ("0000" + $0.toString(16)).slice(-4); appendLog("Fetched opcode: 0x" + hexOpcode); },  
- 68394: () => { appendLog("Executed: Clear Screen (0x00E0)"); },  
- 68444: () => { appendLog("ERROR: Stack underflow on 0x00EE!!!") },  
- 68495: ($0) => { var hexAddr = ("000" + $0.toString(16)).slice(-3); appendLog("Executed: Return from subroutine (0x00EE), jumping to 0x" + hexAddr); },  
- 68630: ($0) => { var hexAddr = ("000" + $0.toString(16)).slice(-3); appendLog("Executed: Jump to address 0x" + hexAddr); },  
- 68738: () => { appendLog("ERROR: Stack overflow on 0x2NNN!!!") },  
- 68788: ($0) => { var hexAddr = ("000" + $0.toString(16)).slice(-3); appendLog("Executed: Call subroutine at 0x" + hexAddr); },  
- 68898: ($0, $1) => { appendLog("Executed: Skip next instruction because V" + $0.toString() + " equals 0x" + ($1.toString(16).toUpperCase().padStart(2, "0"))); },  
- 69040: ($0, $1) => { appendLog("Executed: No skip because V" + $0.toString() + " does not equal 0x" + ($1.toString(16).toUpperCase().padStart(2, "0"))); },  
- 69176: ($0, $1) => { appendLog("Executed: Skip next instruction because V" + $0.toString() + " not equals 0x" + ($1.toString(16).toUpperCase().padStart(2, "0"))); },  
- 69322: ($0, $1) => { appendLog("Executed: No skip because V" + $0.toString() + " equals 0x" + ($1.toString(16).toUpperCase().padStart(2, "0"))); },  
- 69450: ($0, $1, $2) => { appendLog("Executed: Skip because V[" + $0.toString() + "]" + " equals V[" + $1.toString() + "]" + " and opcode ended in " + $2.toString()); },  
- 69595: ($0, $1, $2) => { appendLog("Executed: No skip because V[" + $0.toString() + "]" + " does not equal V[" + $1.toString() + "]" + " or opcode did not end in " + $2.toString()); },  
- 69756: ($0, $1) => { appendLog("Executed: Set V" + $0.toString() + " = 0x" + ($1.toString(16).toUpperCase().padStart(2, "0"))); },  
- 69867: ($0, $1, $2) => { appendLog("Executed: V" + $0.toString() + " += 0x" + ($1.toString(16).toUpperCase().padStart(2, "0")) + " (New V" + $0.toString() + " = 0x" + ($2.toString(16).toUpperCase().padStart(2, "0")) + ")"); },  
- 70070: ($0, $1, $2, $3) => { appendLog("Executed: V[" + $0.toString() + "] = V[" + $1.toString() + "] (" + "0x" + $2.toString(16).toUpperCase().padStart(2, "0") + " = " + "0x" + $3.toString(16).toUpperCase().padStart(2, "0") + ")"); },  
- 70278: ($0, $1, $2, $3, $4) => { appendLog("Executed: V[" + $0.toString() + "] |= V[" + $1.toString() + "] (0x" + $2.toString(16).toUpperCase().padStart(2, "0") + " |= 0x" + $3.toString(16).toUpperCase().padStart(2, "0") + " => 0x" + $4.toString(16).toUpperCase().padStart(2, "0") + ")"); },  
- 70538: ($0, $1, $2, $3, $4) => { appendLog("Executed: V[" + $0.toString() + "] &= V[" + $1.toString() + "] (0x" + $2.toString(16).toUpperCase().padStart(2, "0") + " &= 0x" + $3.toString(16).toUpperCase().padStart(2, "0") + " => 0x" + $4.toString(16).toUpperCase().padStart(2, "0") + ")"); },  
- 70798: ($0, $1, $2, $3, $4) => { appendLog("Executed: V[" + $0.toString() + "] ^= V[" + $1.toString() + "] (0x" + $2.toString(16).toUpperCase().padStart(2, '0') + " ^= 0x" + $3.toString(16).toUpperCase().padStart(2, '0') + " => 0x" + $4.toString(16).toUpperCase().padStart(2, '0') + ")"); },  
- 71058: ($0, $1, $2, $3, $4, $5, $6) => { appendLog("Executed: V[" + $0.toString() + "] = V[" + $0.toString() + "] + V[" + $1.toString() + "] (0x" + $2.toString(16).toUpperCase().padStart(2, "0") + " + 0x" + $3.toString(16).toUpperCase().padStart(2, "0") + " = 0x" + $4.toString(16).toUpperCase().padStart(3, "0") + ", carry=" + $5.toString() + ") => new V[" + $0.toString() + "] = 0x" + $6.toString(16).toUpperCase().padStart(2, "0")); },  
- 71457: ($0, $1, $2, $3, $4, $5) => { appendLog("Executed: V[" + $0.toString() + "] -= V[" + $1.toString() + "] (0x" + $2.toString(16).toUpperCase().padStart(2, '0') + " - 0x" + $3.toString(16).toUpperCase().padStart(2, '0') + " = 0x" + $4.toString(16).toUpperCase().padStart(2, '0') + ", VF=" + $5.toString() + ")"); },  
- 71741: ($0, $1, $2, $3) => { appendLog("Executed: V[" + $0.toString() + "] >> 1 (0x" + $1.toString(16).toUpperCase().padStart(2, '0') + " >> 1 = 0x" + $2.toString(16).toUpperCase().padStart(2, '0') + ", LSB = " + $3.toString() + ")"); },  
- 71951: ($0, $1, $2, $3, $4, $5) => { appendLog("Executed: V[" + $0.toString() + "] = V[" + $1.toString() + "] - V[" + $0.toString() + "] (0x" + $2.toString(16).toUpperCase().padStart(2, '0') + " - 0x" + $3.toString(16).toUpperCase().padStart(2, '0') + " = 0x" + $4.toString(16).toUpperCase().padStart(2, '0') + "), VF = " + $5.toString()); },  
- 72258: ($0, $1, $2, $3) => { appendLog("Executed: V[" + $0.toString() + "] << 1 (0x" + $1.toString(16).toUpperCase().padStart(2, '0') + " << 1 = 0x" + $2.toString(16).toUpperCase().padStart(2, '0') + ", MSB = " + $3.toString() + ")"); },  
- 72468: ($0, $1, $2, $3) => { appendLog("Executed: Skip next instruction because V[" + $0.toString() + "] (0x" + $1.toString(16).toUpperCase().padStart(2, "0") + ") != V[" + $2.toString() + "] (0x" + $3.toString(16).toUpperCase().padStart(2, "0") + ")"); },  
- 72697: ($0, $1, $2, $3) => { appendLog("Executed: No skip because V[" + $0.toString() + "] (0x" + $1.toString(16).toUpperCase().padStart(2, "0") + ") == V[" + $2.toString() + "] (0x" + $3.toString(16).toUpperCase().padStart(2, "0") + ")"); },  
- 72912: ($0) => { var hexI = ("000" + $0.toString(16)).slice(-3); appendLog("Executed: Set I = 0x" + hexI); },  
- 73006: ($0) => { var hexAddr = ("000" + $0.toString(16)).slice(-3); appendLog("Executed: Jump to address 0x" + hexAddr + " (NNN + V[0])"); },  
- 73132: ($0, $1, $2, $3) => { appendLog("Executed: V[" + $0.toString() + "] = Random(0x" + $1.toString(16).toUpperCase().padStart(2, '0') + ") & 0x" + $2.toString(16).toUpperCase().padStart(2, '0') + " = 0x" + $3.toString(16).toUpperCase().padStart(2, '0')); },  
- 73365: ($0, $1, $2) => { appendLog("Executed: Draw sprite at (V" + $0.toString() + ", V" + $1.toString() + ") with height " + $2.toString()); },  
- 73486: ($0, $1) => { appendLog("Executed: Skip next instruction because key for V[" + $0.toString() + "] (key value: 0x" + $1.toString(16).toUpperCase().padStart(1, '0') + ") is pressed."); },  
- 73659: ($0, $1) => { appendLog("Executed: No skip because key for V[" + $0.toString() + "] (key value: 0x" + $1.toString(16).toUpperCase().padStart(1, '0') + ") is not pressed."); },  
- 73822: ($0, $1) => { appendLog("Executed: Skip next instruction because key for V[" + $0.toString() + "] (key value: 0x" + $1.toString(16).toUpperCase().padStart(1, '0') + ") is not pressed."); },  
- 73999: ($0, $1) => { appendLog("Executed: No skip because key for V[" + $0.toString() + "] (key value: 0x" + $1.toString(16).toUpperCase().padStart(1, '0') + ") is pressed."); },  
- 74158: ($0, $1) => { appendLog("Executed: V[" + $0.toString() + "] = delayTimer (0x" + $1.toString(16).toUpperCase().padStart(2, '0') + ")"); },  
- 74283: ($0, $1) => { appendLog("Executed: Key press detected - key 0x" + $0.toString(16).toUpperCase() + " stored in V[" + $1.toString() + "]"); },  
- 74411: ($0, $1) => { appendLog("Executed: delayTimer = V[" + $0.toString() + "] (0x" + $1.toString(16).toUpperCase().padStart(2, '0') + ")"); },  
- 74536: ($0, $1) => { appendLog("Executed: soundTimer = V[" + $0.toString() + "] (0x" + $1.toString(16).toUpperCase().padStart(2, '0') + ")"); },  
- 74661: ($0, $1, $2, $3) => { appendLog("Executed: I = I + V[" + $0.toString() + "] (0x" + $1.toString(16).toUpperCase().padStart(3, '0') + " + 0x" + $2.toString(16).toUpperCase().padStart(2, '0') + " = 0x" + $3.toString(16).toUpperCase().padStart(3, '0') + ")"); },  
- 74899: ($0, $1, $2, $3) => { appendLog("Executed: I = FONT_START_ADDRESS + (V[" + $0.toString() + "] * 5) (0x" + $1.toString(16).toUpperCase().padStart(3, '0') + " + (0x" + $2.toString(16).toUpperCase().padStart(2, '0') + " * 5) = 0x" + $3.toString(16).toUpperCase().padStart(3, '0') + ")"); },  
- 75166: ($0, $1, $2, $3, $4) => { appendLog("Executed: BCD of V[" + $0.toString() + "] (0x" + $1.toString(16).toUpperCase().padStart(2, '0') + ") stored at memory[I..I+2] as: hundreds=0x" + $2.toString(16).toUpperCase().padStart(2, '0') + ", tens=0x" + $3.toString(16).toUpperCase().padStart(2, '0') + ", ones=0x" + $4.toString(16).toUpperCase().padStart(2, '0')); },  
- 75501: ($0, $1) => { appendLog("Executed: Loaded registers V0 to V[" + $0.toString() + "] from memory starting at I (0x" + $1.toString(16).toUpperCase().padStart(3, '0') + ")"); },  
- 75662: ($0, $1) => { appendLog("Executed: Loaded registers V0 to V[" + $0.toString() + "] from memory starting at I (0x" + $1.toString(16).toUpperCase().padStart(3, '0') + ")"); },  
- 75823: () => { appendLog("Executed: Unknown opcode encountered."); }
-};
-
 // end include: preamble.js
 
 
@@ -1173,48 +1121,6 @@ var ASM_CONSTS = {
 
   var __abort_js = () =>
       abort('native code called abort()');
-
-  var readEmAsmArgsArray = [];
-  var readEmAsmArgs = (sigPtr, buf) => {
-      // Nobody should have mutated _readEmAsmArgsArray underneath us to be something else than an array.
-      assert(Array.isArray(readEmAsmArgsArray));
-      // The input buffer is allocated on the stack, so it must be stack-aligned.
-      assert(buf % 16 == 0);
-      readEmAsmArgsArray.length = 0;
-      var ch;
-      // Most arguments are i32s, so shift the buffer pointer so it is a plain
-      // index into HEAP32.
-      while (ch = HEAPU8[sigPtr++]) {
-        var chr = String.fromCharCode(ch);
-        var validChars = ['d', 'f', 'i', 'p'];
-        // In WASM_BIGINT mode we support passing i64 values as bigint.
-        validChars.push('j');
-        assert(validChars.includes(chr), `Invalid character ${ch}("${chr}") in readEmAsmArgs! Use only [${validChars}], and do not specify "v" for void return argument.`);
-        // Floats are always passed as doubles, so all types except for 'i'
-        // are 8 bytes and require alignment.
-        var wide = (ch != 105);
-        wide &= (ch != 112);
-        buf += wide && (buf % 8) ? 4 : 0;
-        readEmAsmArgsArray.push(
-          // Special case for pointers under wasm64 or CAN_ADDRESS_2GB mode.
-          ch == 112 ? HEAPU32[((buf)>>2)] :
-          ch == 106 ? HEAP64[((buf)>>3)] :
-          ch == 105 ?
-            HEAP32[((buf)>>2)] :
-            HEAPF64[((buf)>>3)]
-        );
-        buf += wide ? 8 : 4;
-      }
-      return readEmAsmArgsArray;
-    };
-  var runEmAsmFunction = (code, sigPtr, argbuf) => {
-      var args = readEmAsmArgs(sigPtr, argbuf);
-      assert(ASM_CONSTS.hasOwnProperty(code), `No EM_ASM constant found at address ${code}.  The loaded WebAssembly file is likely out of sync with the generated JavaScript.`);
-      return ASM_CONSTS[code](...args);
-    };
-  var _emscripten_asm_const_int = (code, sigPtr, argbuf) => {
-      return runEmAsmFunction(code, sigPtr, argbuf);
-    };
 
   var _emscripten_date_now = () => Date.now();
 
@@ -4199,8 +4105,6 @@ var wasmImports = {
   /** @export */
   _abort_js: __abort_js,
   /** @export */
-  emscripten_asm_const_int: _emscripten_asm_const_int,
-  /** @export */
   emscripten_date_now: _emscripten_date_now,
   /** @export */
   emscripten_resize_heap: _emscripten_resize_heap,
@@ -4271,7 +4175,7 @@ var missingLibrarySymbols = [
   'readSockaddr',
   'writeSockaddr',
   'emscriptenLog',
-  'runMainThreadEmAsm',
+  'readEmAsmArgs',
   'jstoi_q',
   'getExecutableName',
   'listenOnce',
@@ -4452,8 +4356,6 @@ var unexportedSymbols = [
   'timers',
   'warnOnce',
   'readEmAsmArgsArray',
-  'readEmAsmArgs',
-  'runEmAsmFunction',
   'jstoi_s',
   'asyncLoad',
   'alignMemory',
