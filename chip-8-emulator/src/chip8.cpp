@@ -93,7 +93,7 @@ void Chip8::emulateCycle()
 {
     uint16_t opcode = (memory[PC] << 8) | memory[PC + 1];
     // Log fetched opcode. We convert the opcode to hex in JS.
-    //EM_ASM_({var hexOpcode = ("0000" + $0.toString(16)).slice(-4);appendLog("Fetched opcode: 0x" + hexOpcode); }, opcode);
+    EM_ASM_({var hexOpcode = ("0000" + $0.toString(16)).slice(-4);appendLog("Fetched opcode: 0x" + hexOpcode); }, opcode);
 
     executeOpcode(opcode);
 

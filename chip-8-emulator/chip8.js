@@ -31,7 +31,7 @@ if (ENVIRONMENT_IS_NODE) {
 
 // --pre-jses are emitted after the Module integration code, so that they can
 // refer to Module (if they choose; they can also define Module)
-// include: C:\Users\ALLIED~1\AppData\Local\Temp\tmpmdlo46dm.js
+// include: C:\Users\ALLIED~1\AppData\Local\Temp\tmpj3gybl09.js
 
   Module['expectedDataFileDownloads'] ??= 0;
   Module['expectedDataFileDownloads']++;
@@ -208,25 +208,25 @@ Module['FS_createPath']("/", "roms", true, true);
     }
 
     }
-    loadPackage({"files": [{"filename": "/roms/1-chip8-logo.ch8", "start": 0, "end": 260}, {"filename": "/roms/3-corax+.ch8", "start": 260, "end": 1021}, {"filename": "/roms/4-flags.ch8", "start": 1021, "end": 2062}, {"filename": "/roms/5-quirks.ch8", "start": 2062, "end": 5294}, {"filename": "/roms/Bowling [Gooitzen van der Wal].ch8", "start": 5294, "end": 6488}, {"filename": "/roms/Breakout (Brix hack) [David Winter, 1997].ch8", "start": 6488, "end": 6768}, {"filename": "/roms/Maze [David Winter, 199x].ch8", "start": 6768, "end": 6802}, {"filename": "/roms/Particle Demo [zeroZshadow, 2008].ch8", "start": 6802, "end": 7155}, {"filename": "/roms/Pong (1 player).ch8", "start": 7155, "end": 7401}, {"filename": "/roms/Space Invaders [David Winter].ch8", "start": 7401, "end": 8702}, {"filename": "/roms/Zero Demo [zeroZshadow, 2007].ch8", "start": 8702, "end": 8846}, {"filename": "/roms/c8_test.c8", "start": 8846, "end": 9309}, {"filename": "/roms/ibm-logo.ch8", "start": 9309, "end": 9441}, {"filename": "/roms/test_opcode.ch8", "start": 9441, "end": 9919}], "remote_package_size": 9919});
+    loadPackage({"files": [{"filename": "/roms/1-chip8-logo.ch8", "start": 0, "end": 260}, {"filename": "/roms/3-corax+.ch8", "start": 260, "end": 1021}, {"filename": "/roms/4-flags.ch8", "start": 1021, "end": 2062}, {"filename": "/roms/5-quirks.ch8", "start": 2062, "end": 5294}, {"filename": "/roms/Astro Dodge [Revival Studios, 2008].ch8", "start": 5294, "end": 6407}, {"filename": "/roms/Bowling [Gooitzen van der Wal].ch8", "start": 6407, "end": 7601}, {"filename": "/roms/Breakout (Brix hack) [David Winter, 1997].ch8", "start": 7601, "end": 7881}, {"filename": "/roms/Lunar Lander (Udo Pernisz, 1979).ch8", "start": 7881, "end": 9673}, {"filename": "/roms/Maze [David Winter, 199x].ch8", "start": 9673, "end": 9707}, {"filename": "/roms/Particle Demo [zeroZshadow, 2008].ch8", "start": 9707, "end": 10060}, {"filename": "/roms/Pong (1 player).ch8", "start": 10060, "end": 10306}, {"filename": "/roms/Space Invaders [David Winter].ch8", "start": 10306, "end": 11607}, {"filename": "/roms/Stars [Sergey Naydenov, 2010].ch8", "start": 11607, "end": 12575}, {"filename": "/roms/Tetris [Fran Dachille, 1991].ch8", "start": 12575, "end": 13069}, {"filename": "/roms/Trip8 Demo (2008) [Revival Studios].ch8", "start": 13069, "end": 16272}, {"filename": "/roms/Zero Demo [zeroZshadow, 2007].ch8", "start": 16272, "end": 16416}, {"filename": "/roms/c8_test.c8", "start": 16416, "end": 16879}, {"filename": "/roms/ibm-logo.ch8", "start": 16879, "end": 17011}, {"filename": "/roms/test_opcode.ch8", "start": 17011, "end": 17489}], "remote_package_size": 17489});
 
   })();
 
-// end include: C:\Users\ALLIED~1\AppData\Local\Temp\tmpmdlo46dm.js
-// include: C:\Users\ALLIED~1\AppData\Local\Temp\tmp0p6n6e_x.js
+// end include: C:\Users\ALLIED~1\AppData\Local\Temp\tmpj3gybl09.js
+// include: C:\Users\ALLIED~1\AppData\Local\Temp\tmp2fzy6ac0.js
 
     // All the pre-js content up to here must remain later on, we need to run
     // it.
     if (Module['$ww'] || (typeof ENVIRONMENT_IS_PTHREAD != 'undefined' && ENVIRONMENT_IS_PTHREAD)) Module['preRun'] = [];
     var necessaryPreJSTasks = Module['preRun'].slice();
-  // end include: C:\Users\ALLIED~1\AppData\Local\Temp\tmp0p6n6e_x.js
-// include: C:\Users\ALLIED~1\AppData\Local\Temp\tmp_y0y9bsf.js
+  // end include: C:\Users\ALLIED~1\AppData\Local\Temp\tmp2fzy6ac0.js
+// include: C:\Users\ALLIED~1\AppData\Local\Temp\tmp6kddyaf2.js
 
     if (!Module['preRun']) throw 'Module.preRun should exist because file support used it; did a pre-js delete it?';
     necessaryPreJSTasks.forEach((task) => {
       if (Module['preRun'].indexOf(task) < 0) throw 'All preRun tasks that exist before user pre-js code should remain after; did you replace Module or modify Module.preRun?';
     });
-  // end include: C:\Users\ALLIED~1\AppData\Local\Temp\tmp_y0y9bsf.js
+  // end include: C:\Users\ALLIED~1\AppData\Local\Temp\tmp6kddyaf2.js
 
 
 // Sometimes an existing Module object exists with properties
@@ -1038,6 +1038,11 @@ async function createWasm() {
 }
 
 // === Body ===
+
+var ASM_CONSTS = {
+  68004: ($0) => { var hexOpcode = ("0000" + $0.toString(16)).slice(-4);appendLog("Fetched opcode: 0x" + hexOpcode); }
+};
+
 // end include: preamble.js
 
 
@@ -1121,6 +1126,48 @@ async function createWasm() {
 
   var __abort_js = () =>
       abort('native code called abort()');
+
+  var readEmAsmArgsArray = [];
+  var readEmAsmArgs = (sigPtr, buf) => {
+      // Nobody should have mutated _readEmAsmArgsArray underneath us to be something else than an array.
+      assert(Array.isArray(readEmAsmArgsArray));
+      // The input buffer is allocated on the stack, so it must be stack-aligned.
+      assert(buf % 16 == 0);
+      readEmAsmArgsArray.length = 0;
+      var ch;
+      // Most arguments are i32s, so shift the buffer pointer so it is a plain
+      // index into HEAP32.
+      while (ch = HEAPU8[sigPtr++]) {
+        var chr = String.fromCharCode(ch);
+        var validChars = ['d', 'f', 'i', 'p'];
+        // In WASM_BIGINT mode we support passing i64 values as bigint.
+        validChars.push('j');
+        assert(validChars.includes(chr), `Invalid character ${ch}("${chr}") in readEmAsmArgs! Use only [${validChars}], and do not specify "v" for void return argument.`);
+        // Floats are always passed as doubles, so all types except for 'i'
+        // are 8 bytes and require alignment.
+        var wide = (ch != 105);
+        wide &= (ch != 112);
+        buf += wide && (buf % 8) ? 4 : 0;
+        readEmAsmArgsArray.push(
+          // Special case for pointers under wasm64 or CAN_ADDRESS_2GB mode.
+          ch == 112 ? HEAPU32[((buf)>>2)] :
+          ch == 106 ? HEAP64[((buf)>>3)] :
+          ch == 105 ?
+            HEAP32[((buf)>>2)] :
+            HEAPF64[((buf)>>3)]
+        );
+        buf += wide ? 8 : 4;
+      }
+      return readEmAsmArgsArray;
+    };
+  var runEmAsmFunction = (code, sigPtr, argbuf) => {
+      var args = readEmAsmArgs(sigPtr, argbuf);
+      assert(ASM_CONSTS.hasOwnProperty(code), `No EM_ASM constant found at address ${code}.  The loaded WebAssembly file is likely out of sync with the generated JavaScript.`);
+      return ASM_CONSTS[code](...args);
+    };
+  var _emscripten_asm_const_int = (code, sigPtr, argbuf) => {
+      return runEmAsmFunction(code, sigPtr, argbuf);
+    };
 
   var _emscripten_date_now = () => Date.now();
 
@@ -4105,6 +4152,8 @@ var wasmImports = {
   /** @export */
   _abort_js: __abort_js,
   /** @export */
+  emscripten_asm_const_int: _emscripten_asm_const_int,
+  /** @export */
   emscripten_date_now: _emscripten_date_now,
   /** @export */
   emscripten_resize_heap: _emscripten_resize_heap,
@@ -4175,7 +4224,7 @@ var missingLibrarySymbols = [
   'readSockaddr',
   'writeSockaddr',
   'emscriptenLog',
-  'readEmAsmArgs',
+  'runMainThreadEmAsm',
   'jstoi_q',
   'getExecutableName',
   'listenOnce',
@@ -4356,6 +4405,8 @@ var unexportedSymbols = [
   'timers',
   'warnOnce',
   'readEmAsmArgsArray',
+  'readEmAsmArgs',
+  'runEmAsmFunction',
   'jstoi_s',
   'asyncLoad',
   'alignMemory',
