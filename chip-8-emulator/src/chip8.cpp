@@ -64,20 +64,23 @@ void Chip8::reset()
         memory[FONT_START_ADDRESS + i] = chip8_fontset[i];
     }
     // Log the reset action
-    //EM_ASM({ appendLog("Chip-8 state has been reset"); });
+    EM_ASM({ appendLog("Chip-8 state has been reset"); });
 }
 
 void Chip8::setKeyState(uint8_t key, uint8_t state)
 {
+    if (keys[key] != state)
+    {
+        EM_ASM({ appendLog("Key Press Detected: Key " + $0 + " set to " + $1.toString()); }, key, state);
+    }
     keys[key] = state; // set the state of the key
-    //EM_ASM({ appendLog("Key Press Detected: Key " + $0 + " set to " + $1.toString()); }, key, state);
 }
 
 void Chip8::loadROM(const uint8_t *romData, size_t size)
 {
     if (size > 3584)
     {
-        //EM_ASM({appendLog("ERROR: ROM is too large!!");});
+        EM_ASM({appendLog("ERROR: ROM is too large!!");});
         return;
     }
 
@@ -116,7 +119,7 @@ void Chip8::executeOpcode(uint16_t opcode)
         if (opcode == 0x00E0)
         {
             display.fill(0); // Set all pixels to 0 (off)
-            //EM_ASM({appendLog("Executed: Clear Screen (0x00E0)");});
+            EM_ASM({appendLog("Executed: Clear Screen (0x00E0)");});
         }
         else if (opcode == 0x00EE)
         { // 0x00EE - return from subroutine
@@ -129,8 +132,8 @@ void Chip8::executeOpcode(uint16_t opcode)
             {
                 PC = stack[SP - 1]; // move the pointer
                 SP--;               // decrement stack pointer
-                //EM_ASM_({var hexAddr = ("000" + $0.toString(16)).slice(-3);
-                //appendLog("Executed: Return from subroutine (0x00EE), jumping to 0x" + hexAddr); }, PC);
+                EM_ASM_({var hexAddr = ("000" + $0.toString(16)).slice(-3);
+                appendLog("Executed: Return from subroutine (0x00EE), jumping to 0x" + hexAddr); }, PC);
                 // PC explicity set, exiting early to avoid PC increment
                 return;
             }
@@ -141,9 +144,9 @@ void Chip8::executeOpcode(uint16_t opcode)
     { // 0x1NNN - Set the program counter to NNN (Jump)
         uint16_t NNN = opcode & 0x0FFF;
         PC = NNN;
-        //EM_ASM_({
-                //var hexAddr = ("000" + $0.toString(16)).slice(-3);
-                //appendLog("Executed: Jump to address 0x" + hexAddr); }, NNN);
+        EM_ASM_({
+                var hexAddr = ("000" + $0.toString(16)).slice(-3);
+                appendLog("Executed: Jump to address 0x" + hexAddr); }, NNN);
     }
     break;
     case 0x2000:
@@ -158,8 +161,8 @@ void Chip8::executeOpcode(uint16_t opcode)
             stack[SP] = PC + 2; // push return address to the stack
             SP++;               // increment stack pointer
             PC = NNN;           // set the PC to NNN to jump to the subroutine
-            //EM_ASM_({var hexAddr = ("000" + $0.toString(16)).slice(-3);
-            //appendLog("Executed: Call subroutine at 0x" + hexAddr); }, NNN);
+            EM_ASM_({var hexAddr = ("000" + $0.toString(16)).slice(-3);
+            appendLog("Executed: Call subroutine at 0x" + hexAddr); }, NNN);
             break;
         }
         return; // return early since PC is explictly set
@@ -172,12 +175,12 @@ void Chip8::executeOpcode(uint16_t opcode)
         if (V[X] == NN)
         {
             PC += 4; // skip the next instruction (2 bytes for current instruction + 2 for next)
-            //EM_ASM_({ appendLog("Executed: Skip next instruction because V" + $0.toString() + " equals 0x" + ($1.toString(16).toUpperCase().padStart(2, "0"))); }, X, NN);
+            EM_ASM_({ appendLog("Executed: Skip next instruction because V" + $0.toString() + " equals 0x" + ($1.toString(16).toUpperCase().padStart(2, "0"))); }, X, NN);
         }
         else
         {
             PC += 2; // otherwise proceed as normal
-            //EM_ASM_({ appendLog("Executed: No skip because V" + $0.toString() + " does not equal 0x" + ($1.toString(16).toUpperCase().padStart(2, "0"))); }, X, NN);
+            EM_ASM_({ appendLog("Executed: No skip because V" + $0.toString() + " does not equal 0x" + ($1.toString(16).toUpperCase().padStart(2, "0"))); }, X, NN);
         }
         break;
     }
@@ -189,12 +192,12 @@ void Chip8::executeOpcode(uint16_t opcode)
         if (V[X] != NN)
         {
             PC += 4; // skip the next instruction (2 bytes for current and 2 bytes for next)
-            //EM_ASM_({ appendLog("Executed: Skip next instruction because V" + $0.toString() + " not equals 0x" + ($1.toString(16).toUpperCase().padStart(2, "0"))); }, X, NN);
+            EM_ASM_({ appendLog("Executed: Skip next instruction because V" + $0.toString() + " not equals 0x" + ($1.toString(16).toUpperCase().padStart(2, "0"))); }, X, NN);
         }
         else
         {
             PC += 2; // proceed as normal
-            //EM_ASM_({ appendLog("Executed: No skip because V" + $0.toString() + " equals 0x" + ($1.toString(16).toUpperCase().padStart(2, "0"))); }, X, NN);
+            EM_ASM_({ appendLog("Executed: No skip because V" + $0.toString() + " equals 0x" + ($1.toString(16).toUpperCase().padStart(2, "0"))); }, X, NN);
         }
         break;
     }
@@ -207,12 +210,12 @@ void Chip8::executeOpcode(uint16_t opcode)
         if ((V[X] == V[Y]) && END == 0)
         {
             PC += 4; // skip next instruction (2 bytes for current + 2 for next)
-            //EM_ASM_({ appendLog("Executed: Skip because V[" + $0.toString() + "]" + " equals V[" + $1.toString() + "]" + " and opcode ended in " + $2.toString()); }, X, Y, END);
+            EM_ASM_({ appendLog("Executed: Skip because V[" + $0.toString() + "]" + " equals V[" + $1.toString() + "]" + " and opcode ended in " + $2.toString()); }, X, Y, END);
         }
         else
         {
             PC += 2; // proceed as normal
-            //EM_ASM_({ appendLog("Executed: No skip because V[" + $0.toString() + "]" + " does not equal V[" + $1.toString() + "]" + " or opcode did not end in " + $2.toString()); }, X, Y, END);
+            EM_ASM_({ appendLog("Executed: No skip because V[" + $0.toString() + "]" + " does not equal V[" + $1.toString() + "]" + " or opcode did not end in " + $2.toString()); }, X, Y, END);
         }
         break;
     }
@@ -221,7 +224,7 @@ void Chip8::executeOpcode(uint16_t opcode)
         uint8_t X = (opcode & 0x0F00) >> 8; // Extract X
         uint8_t NN = opcode & 0x00FF;       // Extract NN
         V[X] = NN;
-        //EM_ASM_({ appendLog("Executed: Set V" + $0.toString() + " = 0x" + ($1.toString(16).toUpperCase().padStart(2, "0"))); }, X, NN);
+        EM_ASM_({ appendLog("Executed: Set V" + $0.toString() + " = 0x" + ($1.toString(16).toUpperCase().padStart(2, "0"))); }, X, NN);
         PC += 2;
         break;
     }
@@ -230,8 +233,8 @@ void Chip8::executeOpcode(uint16_t opcode)
         uint8_t X = (opcode & 0x0F00) >> 8; // Extract X
         uint8_t NN = opcode & 0x00FF;
         V[X] += NN; // Add NN to VX (no carry flag modification)
-        //EM_ASM_({ appendLog("Executed: V" + $0.toString() + " += 0x" + ($1.toString(16).toUpperCase().padStart(2, "0")) +
-                            //" (New V" + $0.toString() + " = 0x" + ($2.toString(16).toUpperCase().padStart(2, "0")) + ")"); }, X, NN, V[X]);
+        EM_ASM_({ appendLog("Executed: V" + $0.toString() + " += 0x" + ($1.toString(16).toUpperCase().padStart(2, "0")) +
+                            " (New V" + $0.toString() + " = 0x" + ($2.toString(16).toUpperCase().padStart(2, "0")) + ")"); }, X, NN, V[X]);
         PC += 2;
         break;
     }
@@ -244,7 +247,7 @@ void Chip8::executeOpcode(uint16_t opcode)
             uint8_t X = (opcode & 0x0F00) >> 8; // extract X
             uint8_t Y = (opcode & 0x00F0) >> 4; // extract Y
             V[X] = V[Y];                        // setting the value in register Y to register X
-            //EM_ASM_({ appendLog("Executed: V[" + $0.toString() + "] = V[" + $1.toString() + "] (" + "0x" + $2.toString(16).toUpperCase().padStart(2, "0") + " = " + "0x" + $3.toString(16).toUpperCase().padStart(2, "0") + ")"); }, X, Y, V[X], V[Y]);
+            EM_ASM_({ appendLog("Executed: V[" + $0.toString() + "] = V[" + $1.toString() + "] (" + "0x" + $2.toString(16).toUpperCase().padStart(2, "0") + " = " + "0x" + $3.toString(16).toUpperCase().padStart(2, "0") + ")"); }, X, Y, V[X], V[Y]);
             PC += 2;
             break;
         }
@@ -254,10 +257,10 @@ void Chip8::executeOpcode(uint16_t opcode)
             uint8_t Y = (opcode & 0x00F0) >> 4; // extract Y
             uint8_t oldVX = V[X];               // store original V[X] for logging
             V[X] = V[X] | V[Y];                 // perform bitwise OR (combine the bits)
-            //EM_ASM_({ appendLog("Executed: V[" + $0.toString() + "] |= V[" + $1.toString() +
-                               //"] (0x" + $2.toString(16).toUpperCase().padStart(2, "0") +
-                                //" |= 0x" + $3.toString(16).toUpperCase().padStart(2, "0") +
-                                //" => 0x" + $4.toString(16).toUpperCase().padStart(2, "0") + ")"); }, X, Y, oldVX, V[Y], V[X]);
+            EM_ASM_({ appendLog("Executed: V[" + $0.toString() + "] |= V[" + $1.toString() +
+                               "] (0x" + $2.toString(16).toUpperCase().padStart(2, "0") +
+                                " |= 0x" + $3.toString(16).toUpperCase().padStart(2, "0") +
+                                " => 0x" + $4.toString(16).toUpperCase().padStart(2, "0") + ")"); }, X, Y, oldVX, V[Y], V[X]);
             PC += 2;
             break;
         }
@@ -267,10 +270,10 @@ void Chip8::executeOpcode(uint16_t opcode)
             uint8_t Y = (opcode & 0x00F0) >> 4; // extract Y
             uint8_t oldVX = V[X];
             V[X] = V[X] & V[Y];
-            //EM_ASM_({ appendLog("Executed: V[" + $0.toString() + "] &= V[" + $1.toString() +
-                                //"] (0x" + $2.toString(16).toUpperCase().padStart(2, "0") +
-                                //" &= 0x" + $3.toString(16).toUpperCase().padStart(2, "0") +
-                                //" => 0x" + $4.toString(16).toUpperCase().padStart(2, "0") + ")"); }, X, Y, oldVX, V[Y], V[X]);
+            EM_ASM_({ appendLog("Executed: V[" + $0.toString() + "] &= V[" + $1.toString() +
+                                "] (0x" + $2.toString(16).toUpperCase().padStart(2, "0") +
+                                " &= 0x" + $3.toString(16).toUpperCase().padStart(2, "0") +
+                                " => 0x" + $4.toString(16).toUpperCase().padStart(2, "0") + ")"); }, X, Y, oldVX, V[Y], V[X]);
             PC += 2;
             break;
         }
@@ -280,10 +283,10 @@ void Chip8::executeOpcode(uint16_t opcode)
             uint8_t Y = (opcode & 0x00F0) >> 4; // extract Y
             uint8_t oldVX = V[X];
             V[X] = V[X] ^ V[Y];
-            //EM_ASM_({ appendLog("Executed: V[" + $0.toString() + "] ^= V[" + $1.toString() + "] (0x" +
-                                //$2.toString(16).toUpperCase().padStart(2, '0') + " ^= 0x" +
-                                //$3.toString(16).toUpperCase().padStart(2, '0') + " => 0x" +
-                                //$4.toString(16).toUpperCase().padStart(2, '0') + ")"); }, X, Y, oldVX, V[Y], V[X]);
+            EM_ASM_({ appendLog("Executed: V[" + $0.toString() + "] ^= V[" + $1.toString() + "] (0x" +
+                                $2.toString(16).toUpperCase().padStart(2, '0') + " ^= 0x" +
+                                $3.toString(16).toUpperCase().padStart(2, '0') + " => 0x" +
+                                $4.toString(16).toUpperCase().padStart(2, '0') + ")"); }, X, Y, oldVX, V[Y], V[X]);
             PC += 2;
             break;
         }
@@ -304,13 +307,13 @@ void Chip8::executeOpcode(uint16_t opcode)
                 V[0xF] = 0x0; // else we simply store 0
             }
             V[X] = (sum & 0xFF); // store the lower 8 bits in V[X]
-            //EM_ASM_({ appendLog("Executed: V[" + $0.toString() + "] = V[" + $0.toString() + "] + V[" + $1.toString() +
-                                //"] (0x" + $2.toString(16).toUpperCase().padStart(2, "0") +
-                                //" + 0x" + $3.toString(16).toUpperCase().padStart(2, "0") +
-                                //" = 0x" + $4.toString(16).toUpperCase().padStart(3, "0") +
-                                //", carry=" + $5.toString() +
-                                //") => new V[" + $0.toString() + "] = 0x" +
-                                //$6.toString(16).toUpperCase().padStart(2, "0")); }, X, Y, oldVX, V[Y], sum, V[0xF], V[X]);
+            EM_ASM_({ appendLog("Executed: V[" + $0.toString() + "] = V[" + $0.toString() + "] + V[" + $1.toString() +
+                                "] (0x" + $2.toString(16).toUpperCase().padStart(2, "0") +
+                                " + 0x" + $3.toString(16).toUpperCase().padStart(2, "0") +
+                                " = 0x" + $4.toString(16).toUpperCase().padStart(3, "0") +
+                                ", carry=" + $5.toString() +
+                                ") => new V[" + $0.toString() + "] = 0x" +
+                                $6.toString(16).toUpperCase().padStart(2, "0")); }, X, Y, oldVX, V[Y], sum, V[0xF], V[X]);
             PC += 2;
             break;
         }
@@ -329,11 +332,11 @@ void Chip8::executeOpcode(uint16_t opcode)
                 V[0xF] = 0x0;
             }
             V[X] = V[X] - V[Y]; // perform the subtraction
-            //EM_ASM_({ appendLog("Executed: V[" + $0.toString() + "] -= V[" + $1.toString() +
-                                //"] (0x" + $2.toString(16).toUpperCase().padStart(2, '0') +
-                                //" - 0x" + $3.toString(16).toUpperCase().padStart(2, '0') +
-                                //" = 0x" + $4.toString(16).toUpperCase().padStart(2, '0') +
-                                //", VF=" + $5.toString() + ")"); }, X, Y, oldVX, V[Y], V[X], V[0xF]);
+            EM_ASM_({ appendLog("Executed: V[" + $0.toString() + "] -= V[" + $1.toString() +
+                                "] (0x" + $2.toString(16).toUpperCase().padStart(2, '0') +
+                                " - 0x" + $3.toString(16).toUpperCase().padStart(2, '0') +
+                                " = 0x" + $4.toString(16).toUpperCase().padStart(2, '0') +
+                                ", VF=" + $5.toString() + ")"); }, X, Y, oldVX, V[Y], V[X], V[0xF]);
             PC += 2;
             break;
         }
@@ -343,10 +346,10 @@ void Chip8::executeOpcode(uint16_t opcode)
             uint8_t oldVX = V[X];
             V[0xF] = (V[X] & 0x01); // store least significant bit in V[F]
             V[X] = V[X] >> 1;       // shift V[X] right by 1
-            //EM_ASM_({ appendLog("Executed: V[" + $0.toString() + "] >> 1 (0x" +
-                                //$1.toString(16).toUpperCase().padStart(2, '0') + " >> 1 = 0x" +
-                                //$2.toString(16).toUpperCase().padStart(2, '0') +
-                                //", LSB = " + $3.toString() + ")"); }, X, oldVX, V[X], V[0xF]);
+            EM_ASM_({ appendLog("Executed: V[" + $0.toString() + "] >> 1 (0x" +
+                                $1.toString(16).toUpperCase().padStart(2, '0') + " >> 1 = 0x" +
+                                $2.toString(16).toUpperCase().padStart(2, '0') +
+                                ", LSB = " + $3.toString() + ")"); }, X, oldVX, V[X], V[0xF]);
             PC += 2;
             break;
         }
@@ -365,12 +368,12 @@ void Chip8::executeOpcode(uint16_t opcode)
                 V[0xF] = 0x0; // borrow occured, set V[F] to 0
             }
             V[X] = V[Y] - V[X]; // perform the substraction
-            //EM_ASM_({ appendLog("Executed: V[" + $0.toString() + "] = V[" + $1.toString() +
-                                //"] - V[" + $0.toString() + "] (0x" +
-                                //$2.toString(16).toUpperCase().padStart(2, '0') +
-                                //" - 0x" + $3.toString(16).toUpperCase().padStart(2, '0') +
-                                //" = 0x" + $4.toString(16).toUpperCase().padStart(2, '0') +
-                                //"), VF = " + $5.toString()); }, X, Y, oldVY, oldVX, V[X], V[0xF]);
+            EM_ASM_({ appendLog("Executed: V[" + $0.toString() + "] = V[" + $1.toString() +
+                                "] - V[" + $0.toString() + "] (0x" +
+                                $2.toString(16).toUpperCase().padStart(2, '0') +
+                                " - 0x" + $3.toString(16).toUpperCase().padStart(2, '0') +
+                                " = 0x" + $4.toString(16).toUpperCase().padStart(2, '0') +
+                                "), VF = " + $5.toString()); }, X, Y, oldVY, oldVX, V[X], V[0xF]);
             PC += 2;
             break;
         }
@@ -380,10 +383,10 @@ void Chip8::executeOpcode(uint16_t opcode)
             uint8_t oldVX = V[X];
             V[0xF] = (V[X] & 0x80) >> 7; // in a 8 bit (e.g. 10000000) value the MSB is in the 0x80 position (i.e. performing this results in 00000001 if V[X] was 10000000)
             V[X] = V[X] << 1;            // left shift V[X] by 1
-            //EM_ASM_({ appendLog("Executed: V[" + $0.toString() + "] << 1 (0x" +
-                                //$1.toString(16).toUpperCase().padStart(2, '0') +
-                                //" << 1 = 0x" + $2.toString(16).toUpperCase().padStart(2, '0') +
-                                //", MSB = " + $3.toString() + ")"); }, X, oldVX, V[X], V[0xF]);
+            EM_ASM_({ appendLog("Executed: V[" + $0.toString() + "] << 1 (0x" +
+                                $1.toString(16).toUpperCase().padStart(2, '0') +
+                                " << 1 = 0x" + $2.toString(16).toUpperCase().padStart(2, '0') +
+                                ", MSB = " + $3.toString() + ")"); }, X, oldVX, V[X], V[0xF]);
             PC += 2;
             break;
         }
@@ -401,15 +404,15 @@ void Chip8::executeOpcode(uint16_t opcode)
         if (V[X] != V[Y])
         {
             PC += 4;
-            //EM_ASM_({ appendLog("Executed: Skip next instruction because V[" + $0.toString() + "] (0x" +
-                                //$1.toString(16).toUpperCase().padStart(2, "0") + ") != V[" + $2.toString() +
-                                //"] (0x" + $3.toString(16).toUpperCase().padStart(2, "0") + ")"); }, X, V[X], Y, V[Y]);
+            EM_ASM_({ appendLog("Executed: Skip next instruction because V[" + $0.toString() + "] (0x" +
+                                $1.toString(16).toUpperCase().padStart(2, "0") + ") != V[" + $2.toString() +
+                                "] (0x" + $3.toString(16).toUpperCase().padStart(2, "0") + ")"); }, X, V[X], Y, V[Y]);
         }
         else
         {
-            //EM_ASM_({ appendLog("Executed: No skip because V[" + $0.toString() + "] (0x" +
-                                //$1.toString(16).toUpperCase().padStart(2, "0") + ") == V[" + $2.toString() +
-                                //"] (0x" + $3.toString(16).toUpperCase().padStart(2, "0") + ")"); }, X, V[X], Y, V[Y]);
+            EM_ASM_({ appendLog("Executed: No skip because V[" + $0.toString() + "] (0x" +
+                                $1.toString(16).toUpperCase().padStart(2, "0") + ") == V[" + $2.toString() +
+                                "] (0x" + $3.toString(16).toUpperCase().padStart(2, "0") + ")"); }, X, V[X], Y, V[Y]);
             PC += 2;
         }
         break;
@@ -418,9 +421,9 @@ void Chip8::executeOpcode(uint16_t opcode)
     {                                   // 0xANNN - Set index register I
         uint16_t NNN = opcode & 0x0FFF; // Extract NNN (12-bit address)
         I = NNN;
-        //EM_ASM_({
-                //var hexI = ("000" + $0.toString(16)).slice(-3);
-                //appendLog("Executed: Set I = 0x" + hexI); }, NNN);
+        EM_ASM_({
+                var hexI = ("000" + $0.toString(16)).slice(-3);
+                appendLog("Executed: Set I = 0x" + hexI); }, NNN);
         PC += 2;
         break;
     }
@@ -428,9 +431,9 @@ void Chip8::executeOpcode(uint16_t opcode)
     {                                      // 0xBNNN - set PC to NNN + V[0]
         uint16_t NNN = opcode & 0x0FFF;    // extract NNN
         uint16_t jumpAddress = NNN + V[0]; // Calculate jump address
-        //EM_ASM_({
-        //var hexAddr = ("000" + $0.toString(16)).slice(-3);
-        //appendLog("Executed: Jump to address 0x" + hexAddr + " (NNN + V[0])"); }, jumpAddress);
+        EM_ASM_({
+        var hexAddr = ("000" + $0.toString(16)).slice(-3);
+        appendLog("Executed: Jump to address 0x" + hexAddr + " (NNN + V[0])"); }, jumpAddress);
         PC = jumpAddress; // Set PC to NNN + V[0]
         break;
     }
@@ -440,10 +443,10 @@ void Chip8::executeOpcode(uint16_t opcode)
         uint8_t NN = opcode & 0x00FF;
         uint8_t rnd = rand() % 256; // generate random 8-bit value (0 to 255)
         V[X] = rnd & NN;            // performn bitwise AND with NN and store in V[X]
-        //EM_ASM_({ appendLog("Executed: V[" + $0.toString() + "] = Random(0x" +
-                            //$1.toString(16).toUpperCase().padStart(2, '0') +
-                            //") & 0x" + $2.toString(16).toUpperCase().padStart(2, '0') +
-                            //" = 0x" + $3.toString(16).toUpperCase().padStart(2, '0')); }, X, rnd, NN, V[X]);
+        EM_ASM_({ appendLog("Executed: V[" + $0.toString() + "] = Random(0x" +
+                            $1.toString(16).toUpperCase().padStart(2, '0') +
+                            ") & 0x" + $2.toString(16).toUpperCase().padStart(2, '0') +
+                            " = 0x" + $3.toString(16).toUpperCase().padStart(2, '0')); }, X, rnd, NN, V[X]);
         PC += 2;
         break;
     }
@@ -475,7 +478,7 @@ void Chip8::executeOpcode(uint16_t opcode)
                 }
             }
         }
-        //EM_ASM_({ appendLog("Executed: Draw sprite at (V" + $0.toString() + ", V" + $1.toString() + ") with height " + $2.toString()); }, X, Y, N);
+        EM_ASM_({ appendLog("Executed: Draw sprite at (V" + $0.toString() + ", V" + $1.toString() + ") with height " + $2.toString()); }, X, Y, N);
         PC += 2;
         break;
     }
@@ -488,14 +491,14 @@ void Chip8::executeOpcode(uint16_t opcode)
         { // 0xEX9E - Skip next instruction if V[X] is pressed
             if (keys[V[X]] != 0)
             {
-                //EM_ASM_({ appendLog("Executed: Skip next instruction because key for V[" + $0.toString() +
-                                    //"] (key value: 0x" + $1.toString(16).toUpperCase().padStart(1, '0') + ") is pressed."); }, X, V[X]);
+                EM_ASM_({ appendLog("Executed: Skip next instruction because key for V[" + $0.toString() +
+                                    "] (key value: 0x" + $1.toString(16).toUpperCase().padStart(1, '0') + ") is pressed."); }, X, V[X]);
                 PC += 4;
             }
             else
             {
-                //EM_ASM_({ appendLog("Executed: No skip because key for V[" + $0.toString() +
-                                    //"] (key value: 0x" + $1.toString(16).toUpperCase().padStart(1, '0') + ") is not pressed."); }, X, V[X]);
+                EM_ASM_({ appendLog("Executed: No skip because key for V[" + $0.toString() +
+                                    "] (key value: 0x" + $1.toString(16).toUpperCase().padStart(1, '0') + ") is not pressed."); }, X, V[X]);
                 PC += 2;
             }
             break;
@@ -504,17 +507,17 @@ void Chip8::executeOpcode(uint16_t opcode)
         { // 0x8XA1 - Skip next instruction if V[X] is not pressed
             if (keys[V[X]] == 0)
             {
-                //EM_ASM_({ appendLog("Executed: Skip next instruction because key for V[" + $0.toString() +
-                                    //"] (key value: 0x" + $1.toString(16).toUpperCase().padStart(1, '0') +
-                                    //") is not pressed."); }, X, V[X]);
+                EM_ASM_({ appendLog("Executed: Skip next instruction because key for V[" + $0.toString() +
+                                    "] (key value: 0x" + $1.toString(16).toUpperCase().padStart(1, '0') +
+                                    ") is not pressed."); }, X, V[X]);
 
                 PC += 4;
             }
             else
             {
-                //EM_ASM_({ appendLog("Executed: No skip because key for V[" + $0.toString() +
-                                    //"] (key value: 0x" + $1.toString(16).toUpperCase().padStart(1, '0') +
-                                    //") is pressed."); }, X, V[X]);
+                EM_ASM_({ appendLog("Executed: No skip because key for V[" + $0.toString() +
+                                    "] (key value: 0x" + $1.toString(16).toUpperCase().padStart(1, '0') +
+                                    ") is pressed."); }, X, V[X]);
                 PC += 2;
             }
             break;
@@ -535,8 +538,8 @@ void Chip8::executeOpcode(uint16_t opcode)
         { // 0xFX07 - Set V[X] to current value of delay timer
             uint8_t X = (opcode & 0x0F00) >> 8;
             V[X] = delayTimer;
-            //EM_ASM_({ appendLog("Executed: V[" + $0.toString() + "] = delayTimer (0x" +
-                                //$1.toString(16).toUpperCase().padStart(2, '0') + ")"); }, X, delayTimer);
+            EM_ASM_({ appendLog("Executed: V[" + $0.toString() + "] = delayTimer (0x" +
+                                $1.toString(16).toUpperCase().padStart(2, '0') + ")"); }, X, delayTimer);
             PC += 2;
             break;
         }
@@ -550,9 +553,9 @@ void Chip8::executeOpcode(uint16_t opcode)
                 {
                     V[X] = i; // key press detected, storing key index in V[X]
                     keyPressed = true;
-                    //EM_ASM_({ appendLog("Executed: Key press detected - key 0x" +
-                                        //$0.toString(16).toUpperCase() +
-                                        //" stored in V[" + $1.toString() + "]"); }, i, X);
+                    EM_ASM_({ appendLog("Executed: Key press detected - key 0x" +
+                                        $0.toString(16).toUpperCase() +
+                                        " stored in V[" + $1.toString() + "]"); }, i, X);
                     break;
                 }
             }
@@ -567,8 +570,8 @@ void Chip8::executeOpcode(uint16_t opcode)
         { // 0xFX15 - Set delay timer to V[X]
             uint8_t X = (opcode & 0x0F00) >> 8;
             delayTimer = V[X];
-            //EM_ASM_({ appendLog("Executed: delayTimer = V[" + $0.toString() + "] (0x" +
-                                //$1.toString(16).toUpperCase().padStart(2, '0') + ")"); }, X, V[X]);
+            EM_ASM_({ appendLog("Executed: delayTimer = V[" + $0.toString() + "] (0x" +
+                                $1.toString(16).toUpperCase().padStart(2, '0') + ")"); }, X, V[X]);
             PC += 2;
             break;
         }
@@ -576,8 +579,8 @@ void Chip8::executeOpcode(uint16_t opcode)
         { // 0xFX18 - Set sound timer to V[X]
             uint8_t X = (opcode & 0x0F00) >> 8;
             soundTimer = V[X];
-            //EM_ASM_({ appendLog("Executed: soundTimer = V[" + $0.toString() + "] (0x" +
-                                //$1.toString(16).toUpperCase().padStart(2, '0') + ")"); }, X, V[X]);
+            EM_ASM_({ appendLog("Executed: soundTimer = V[" + $0.toString() + "] (0x" +
+                                $1.toString(16).toUpperCase().padStart(2, '0') + ")"); }, X, V[X]);
             PC += 2;
             break;
         }
@@ -586,10 +589,10 @@ void Chip8::executeOpcode(uint16_t opcode)
             uint8_t X = (opcode & 0x0F00) >> 8;
             uint16_t oldI = I;
             I += V[X]; // perform addition
-            //EM_ASM_({ appendLog("Executed: I = I + V[" + $0.toString() +
-                                //"] (0x" + $1.toString(16).toUpperCase().padStart(3, '0') +
-                                //" + 0x" + $2.toString(16).toUpperCase().padStart(2, '0') +
-                                //" = 0x" + $3.toString(16).toUpperCase().padStart(3, '0') + ")"); }, X, oldI, V[X], I);
+            EM_ASM_({ appendLog("Executed: I = I + V[" + $0.toString() +
+                                "] (0x" + $1.toString(16).toUpperCase().padStart(3, '0') +
+                                " + 0x" + $2.toString(16).toUpperCase().padStart(2, '0') +
+                                " = 0x" + $3.toString(16).toUpperCase().padStart(3, '0') + ")"); }, X, oldI, V[X], I);
             PC += 2;
             break;
         }
@@ -598,10 +601,10 @@ void Chip8::executeOpcode(uint16_t opcode)
             uint8_t X = (opcode & 0x0F00) >> 8;
             uint8_t digit = V[X];
             I = FONT_START_ADDRESS + (digit * 5); // each sprite is 5 bytes
-            //EM_ASM_({ appendLog("Executed: I = FONT_START_ADDRESS + (V[" + $0.toString() +
-                                //"] * 5) (0x" + $1.toString(16).toUpperCase().padStart(3, '0') +
-                                //" + (0x" + $2.toString(16).toUpperCase().padStart(2, '0') +
-                                //" * 5) = 0x" + $3.toString(16).toUpperCase().padStart(3, '0') + ")"); }, X, FONT_START_ADDRESS, digit, I);
+            EM_ASM_({ appendLog("Executed: I = FONT_START_ADDRESS + (V[" + $0.toString() +
+                                "] * 5) (0x" + $1.toString(16).toUpperCase().padStart(3, '0') +
+                                " + (0x" + $2.toString(16).toUpperCase().padStart(2, '0') +
+                                " * 5) = 0x" + $3.toString(16).toUpperCase().padStart(3, '0') + ")"); }, X, FONT_START_ADDRESS, digit, I);
             PC += 2;
             break;
         }
@@ -612,12 +615,12 @@ void Chip8::executeOpcode(uint16_t opcode)
             memory[I] = value / 100;           // hundred digit
             memory[I + 1] = (value / 10) % 10; // tens digit
             memory[I + 2] = value % 10;        // ones digit
-            //EM_ASM_({ appendLog("Executed: BCD of V[" + $0.toString() +
-                                //"] (0x" + $1.toString(16).toUpperCase().padStart(2, '0') +
-                                //") stored at memory[I..I+2] as: hundreds=0x" +
-                                //$2.toString(16).toUpperCase().padStart(2, '0') +
-                                //", tens=0x" + $3.toString(16).toUpperCase().padStart(2, '0') +
-                                //", ones=0x" + $4.toString(16).toUpperCase().padStart(2, '0')); }, X, value, memory[I], memory[I + 1], memory[I + 2]);
+            EM_ASM_({ appendLog("Executed: BCD of V[" + $0.toString() +
+                                "] (0x" + $1.toString(16).toUpperCase().padStart(2, '0') +
+                                ") stored at memory[I..I+2] as: hundreds=0x" +
+                                $2.toString(16).toUpperCase().padStart(2, '0') +
+                                ", tens=0x" + $3.toString(16).toUpperCase().padStart(2, '0') +
+                                ", ones=0x" + $4.toString(16).toUpperCase().padStart(2, '0')); }, X, value, memory[I], memory[I + 1], memory[I + 2]);
             PC += 2;
             break;
         }
@@ -628,8 +631,8 @@ void Chip8::executeOpcode(uint16_t opcode)
             {
                 memory[I + i] = V[i];
             }
-            //EM_ASM_({ appendLog("Executed: Loaded registers V0 to V[" + $0.toString() + "] from memory starting at I (0x" +
-                                //$1.toString(16).toUpperCase().padStart(3, '0') + ")"); }, X, I);
+            EM_ASM_({ appendLog("Executed: Loaded registers V0 to V[" + $0.toString() + "] from memory starting at I (0x" +
+                                $1.toString(16).toUpperCase().padStart(3, '0') + ")"); }, X, I);
             PC += 2;
             break;
         }
@@ -640,8 +643,8 @@ void Chip8::executeOpcode(uint16_t opcode)
             {
                 V[i] = memory[I + i];
             }
-            //EM_ASM_({ appendLog("Executed: Loaded registers V0 to V[" + $0.toString() + "] from memory starting at I (0x" +
-                                //$1.toString(16).toUpperCase().padStart(3, '0') + ")"); }, X, I);
+            EM_ASM_({ appendLog("Executed: Loaded registers V0 to V[" + $0.toString() + "] from memory starting at I (0x" +
+                                $1.toString(16).toUpperCase().padStart(3, '0') + ")"); }, X, I);
             PC += 2;
             break;
         }
@@ -654,9 +657,9 @@ void Chip8::executeOpcode(uint16_t opcode)
         break;
     }
     default:
-        //EM_ASM({
-            //appendLog("Executed: Unknown opcode encountered.");
-        //});
+        EM_ASM({
+            appendLog("Executed: Unknown opcode encountered.");
+        });
         PC += 2;
         break;
     }
