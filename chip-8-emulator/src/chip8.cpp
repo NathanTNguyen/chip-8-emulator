@@ -86,7 +86,7 @@ void Chip8::loadROM(const uint8_t *romData, size_t size)
         memory[0x200 + i] = romData[i]; // Load ROM into memory starting at 0x200
     }
     // Log successful load, passing size as an argument.
-    //EM_ASM_({ appendLog("Loaded ROM successfully (" + $0.toString() + " bytes)"); }, size);
+    EM_ASM_({ appendLog("Loaded ROM successfully (" + $0.toString() + " bytes)"); }, size);
 }
 
 void Chip8::emulateCycle()

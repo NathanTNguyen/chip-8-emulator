@@ -31,7 +31,7 @@ if (ENVIRONMENT_IS_NODE) {
 
 // --pre-jses are emitted after the Module integration code, so that they can
 // refer to Module (if they choose; they can also define Module)
-// include: C:\Users\ALLIED~1\AppData\Local\Temp\tmpj3gybl09.js
+// include: C:\Users\ALLIED~1\AppData\Local\Temp\tmpsyhl5jdw.js
 
   Module['expectedDataFileDownloads'] ??= 0;
   Module['expectedDataFileDownloads']++;
@@ -208,25 +208,25 @@ Module['FS_createPath']("/", "roms", true, true);
     }
 
     }
-    loadPackage({"files": [{"filename": "/roms/1-chip8-logo.ch8", "start": 0, "end": 260}, {"filename": "/roms/3-corax+.ch8", "start": 260, "end": 1021}, {"filename": "/roms/4-flags.ch8", "start": 1021, "end": 2062}, {"filename": "/roms/5-quirks.ch8", "start": 2062, "end": 5294}, {"filename": "/roms/Astro Dodge [Revival Studios, 2008].ch8", "start": 5294, "end": 6407}, {"filename": "/roms/Bowling [Gooitzen van der Wal].ch8", "start": 6407, "end": 7601}, {"filename": "/roms/Breakout (Brix hack) [David Winter, 1997].ch8", "start": 7601, "end": 7881}, {"filename": "/roms/Lunar Lander (Udo Pernisz, 1979).ch8", "start": 7881, "end": 9673}, {"filename": "/roms/Maze [David Winter, 199x].ch8", "start": 9673, "end": 9707}, {"filename": "/roms/Particle Demo [zeroZshadow, 2008].ch8", "start": 9707, "end": 10060}, {"filename": "/roms/Pong (1 player).ch8", "start": 10060, "end": 10306}, {"filename": "/roms/Space Invaders [David Winter].ch8", "start": 10306, "end": 11607}, {"filename": "/roms/Stars [Sergey Naydenov, 2010].ch8", "start": 11607, "end": 12575}, {"filename": "/roms/Tetris [Fran Dachille, 1991].ch8", "start": 12575, "end": 13069}, {"filename": "/roms/Trip8 Demo (2008) [Revival Studios].ch8", "start": 13069, "end": 16272}, {"filename": "/roms/Zero Demo [zeroZshadow, 2007].ch8", "start": 16272, "end": 16416}, {"filename": "/roms/c8_test.c8", "start": 16416, "end": 16879}, {"filename": "/roms/ibm-logo.ch8", "start": 16879, "end": 17011}, {"filename": "/roms/test_opcode.ch8", "start": 17011, "end": 17489}], "remote_package_size": 17489});
+    loadPackage({"files": [{"filename": "/roms/1-chip8-logo.ch8", "start": 0, "end": 260}, {"filename": "/roms/3-corax+.ch8", "start": 260, "end": 1021}, {"filename": "/roms/4-flags.ch8", "start": 1021, "end": 2062}, {"filename": "/roms/5-quirks.ch8", "start": 2062, "end": 5294}, {"filename": "/roms/Animal Race [Brian Astle].ch8", "start": 5294, "end": 6488}, {"filename": "/roms/Astro Dodge [Revival Studios, 2008].ch8", "start": 6488, "end": 7601}, {"filename": "/roms/Bowling [Gooitzen van der Wal].ch8", "start": 7601, "end": 8795}, {"filename": "/roms/Breakout (Brix hack) [David Winter, 1997].ch8", "start": 8795, "end": 9075}, {"filename": "/roms/Lunar Lander (Udo Pernisz, 1979).ch8", "start": 9075, "end": 10867}, {"filename": "/roms/Maze [David Winter, 199x].ch8", "start": 10867, "end": 10901}, {"filename": "/roms/Particle Demo [zeroZshadow, 2008].ch8", "start": 10901, "end": 11254}, {"filename": "/roms/Pong (1 player).ch8", "start": 11254, "end": 11500}, {"filename": "/roms/Space Invaders [David Winter].ch8", "start": 11500, "end": 12801}, {"filename": "/roms/Stars [Sergey Naydenov, 2010].ch8", "start": 12801, "end": 13769}, {"filename": "/roms/Tetris [Fran Dachille, 1991].ch8", "start": 13769, "end": 14263}, {"filename": "/roms/Trip8 Demo (2008) [Revival Studios].ch8", "start": 14263, "end": 17466}, {"filename": "/roms/Zero Demo [zeroZshadow, 2007].ch8", "start": 17466, "end": 17610}, {"filename": "/roms/c8_test.c8", "start": 17610, "end": 18073}, {"filename": "/roms/ibm-logo.ch8", "start": 18073, "end": 18205}, {"filename": "/roms/test_opcode.ch8", "start": 18205, "end": 18683}], "remote_package_size": 18683});
 
   })();
 
-// end include: C:\Users\ALLIED~1\AppData\Local\Temp\tmpj3gybl09.js
-// include: C:\Users\ALLIED~1\AppData\Local\Temp\tmp2fzy6ac0.js
+// end include: C:\Users\ALLIED~1\AppData\Local\Temp\tmpsyhl5jdw.js
+// include: C:\Users\ALLIED~1\AppData\Local\Temp\tmpz_h2byac.js
 
     // All the pre-js content up to here must remain later on, we need to run
     // it.
     if (Module['$ww'] || (typeof ENVIRONMENT_IS_PTHREAD != 'undefined' && ENVIRONMENT_IS_PTHREAD)) Module['preRun'] = [];
     var necessaryPreJSTasks = Module['preRun'].slice();
-  // end include: C:\Users\ALLIED~1\AppData\Local\Temp\tmp2fzy6ac0.js
-// include: C:\Users\ALLIED~1\AppData\Local\Temp\tmp6kddyaf2.js
+  // end include: C:\Users\ALLIED~1\AppData\Local\Temp\tmpz_h2byac.js
+// include: C:\Users\ALLIED~1\AppData\Local\Temp\tmpotai9x9i.js
 
     if (!Module['preRun']) throw 'Module.preRun should exist because file support used it; did a pre-js delete it?';
     necessaryPreJSTasks.forEach((task) => {
       if (Module['preRun'].indexOf(task) < 0) throw 'All preRun tasks that exist before user pre-js code should remain after; did you replace Module or modify Module.preRun?';
     });
-  // end include: C:\Users\ALLIED~1\AppData\Local\Temp\tmp6kddyaf2.js
+  // end include: C:\Users\ALLIED~1\AppData\Local\Temp\tmpotai9x9i.js
 
 
 // Sometimes an existing Module object exists with properties
@@ -1040,7 +1040,8 @@ async function createWasm() {
 // === Body ===
 
 var ASM_CONSTS = {
-  68004: ($0) => { var hexOpcode = ("0000" + $0.toString(16)).slice(-4);appendLog("Fetched opcode: 0x" + hexOpcode); }
+  68004: ($0) => { appendLog("Loaded ROM successfully (" + $0.toString() + " bytes)"); },  
+ 68076: ($0) => { var hexOpcode = ("0000" + $0.toString(16)).slice(-4);appendLog("Fetched opcode: 0x" + hexOpcode); }
 };
 
 // end include: preamble.js

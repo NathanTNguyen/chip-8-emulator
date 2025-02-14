@@ -8,12 +8,18 @@
     <title>CHIP-8 Emulator in C++</title>
     <script src="chip8.js"></script>
     <link href="output.css" rel="stylesheet" />
+    <style>
+      .canvas-container {
+        position: relative;
+        display: inline-block;
+        border: 4px solid white;
+      }
+
+    </style>
   </head>
   <body class="min-h-screen bg-gray-900 text-white min-w-[1400px]">
     <!-- Sidebar -->
-    <div
-      class="w-64 fixed left-0 top-0 bottom-0 bg-gray-800 p-4 overflow-y-auto"
-    >
+    <div class="w-64 fixed left-0 top-0 bottom-0 bg-gray-800 p-4 overflow-y-auto">
       <h2 class="text-xl font-bold mb-4">ROM List</h2>
       <ul>
         <li class="mb-2">
@@ -40,6 +46,14 @@
             Zero Demo ROM
           </button>
         </li>
+        <li class="mb-2">
+          <button
+            onclick="loadTrip8Demo()"
+            class="w-full text-left px-2 py-1 hover:bg-gray-700 rounded"
+          >
+            Trip8 Demo ROM
+          </button>
+        </li>
       </ul>
     </div>
 
@@ -51,12 +65,14 @@
         </h1>
         <div class="flex gap-4 items-start">
           <!-- Emulator Canvas -->
-          <canvas
-            id="chip8Canvas"
-            width="640"
-            height="320"
-            class="border-4 border-white bg-black image-rendering-pixelated"
-          ></canvas>
+          <div class="canvas-container">
+            <canvas
+              id="chip8Canvas"
+              width="640"
+              height="320"
+              class="bg-black image-rendering-pixelated"
+            ></canvas>
+          </div>
           <!-- Log window -->
           <div
             id="logWindow"
@@ -93,9 +109,7 @@
     </div>
 
     <script>
-      // --- Optimized Key Event Listeners ---
-
-      // Precomputed mapping: physical key (lowercase) -> CHIP-8 key
+      // --- Key Event Listeners ---
       const keyMap = {
         1: 0x1,
         2: 0x2,
@@ -115,7 +129,6 @@
         v: 0xf,
       };
 
-      // Listen for keydown events.
       document.addEventListener("keydown", function (event) {
         const chip8Key = keyMap[event.key.toLowerCase()];
         if (chip8Key !== undefined) {
@@ -124,7 +137,6 @@
         }
       });
 
-      // Listen for keyup events.
       document.addEventListener("keyup", function (event) {
         const chip8Key = keyMap[event.key.toLowerCase()];
         if (chip8Key !== undefined) {
@@ -134,14 +146,12 @@
       });
 
       // --- Logging Functionality ---
-      // Append log messages to the log window but limit the total number of entries to 100.
       function appendLog(message) {
         const logWindow = document.getElementById("logWindow");
         const logEntry = document.createElement("div");
         logEntry.textContent = message;
         logEntry.classList.add("mb-2");
         logWindow.appendChild(logEntry);
-        // Remove the oldest entry if we have more than 100 log entries.
         while (logWindow.children.length > 100) {
           logWindow.removeChild(logWindow.firstChild);
         }
@@ -151,11 +161,9 @@
       function resetEmulator() {
         stopEmulator();
         Module._reset();
-        // Clear the log window.
-        let logWindow = document.getElementById("logWindow");
-        logWindow.innerHTML = "";
-        let canvas = document.getElementById("chip8Canvas");
-        let ctx = canvas.getContext("2d");
+        document.getElementById("logWindow").innerHTML = "";
+        const canvas = document.getElementById("chip8Canvas");
+        const ctx = canvas.getContext("2d");
         ctx.fillStyle = "black";
         ctx.fillRect(0, 0, canvas.width, canvas.height);
         appendLog("Emulator has been reset!");
@@ -166,20 +174,17 @@
       let animationFrameId;
       let stepIntervalId;
 
-      // Create a persistent offscreen canvas for rendering.
       const offscreenCanvas = document.createElement("canvas");
       offscreenCanvas.width = 64;
       offscreenCanvas.height = 32;
       const offscreenCtx = offscreenCanvas.getContext("2d");
 
-      // Cache the display pointer from the WASM heap.
       let displayBufferPtr = null;
 
       Module.onRuntimeInitialized = function () {
         appendLog("CHIP-8 Emulator loaded!");
         appendLog("Load a ROM from the ROM List to get started!");
 
-        // Override Module.print to send output to log window.
         Module.print = (function (oldPrint) {
           return function (text) {
             appendLog(text);
@@ -187,7 +192,6 @@
           };
         })(Module.print);
 
-        // Also log errors.
         Module.printErr = (function (oldPrintErr) {
           return function (text) {
             appendLog("ERROR: " + text);
@@ -199,37 +203,37 @@
           if (running) return;
           appendLog("Emulator started!");
           running = true;
-
-          // Cache the display buffer pointer once.
           if (!displayBufferPtr) {
             displayBufferPtr = Module._getDisplay();
           }
 
-          // Step function: run one CHIP-8 cycle.
           function step() {
             if (!running) return;
             Module._emulateCycle();
           }
-
-          // Run the step function at a fixed rate.
           stepIntervalId = setInterval(step, 1000 / 144);
 
-          // Render continuously using requestAnimationFrame.
           function render() {
             if (!running) return;
             let imageData = offscreenCtx.createImageData(64, 32);
             const pixels = imageData.data;
             for (let i = 0; i < 64 * 32; i++) {
               let pixelVal = Module.HEAPU8[displayBufferPtr + i];
-              let color = pixelVal ? 255 : 0;
               let index = i * 4;
-              pixels[index] = color;
-              pixels[index + 1] = color;
-              pixels[index + 2] = color;
-              pixels[index + 3] = 255;
+              if (pixelVal) {
+                pixels[index] = 0;
+                pixels[index + 1] = 255;
+                pixels[index + 2] = 0;
+                pixels[index + 3] = 255;
+              } else {
+                pixels[index] = 0;
+                pixels[index + 1] = 0;
+                pixels[index + 2] = 0;
+                pixels[index + 3] = 255;
+              }
             }
             offscreenCtx.putImageData(imageData, 0, 0);
-            let canvas = document.getElementById("chip8Canvas");
+            const canvas = document.getElementById("chip8Canvas");
             let ctx = canvas.getContext("2d");
             ctx.imageSmoothingEnabled = false;
             ctx.drawImage(
@@ -256,26 +260,22 @@
         };
       };
 
-      // ROM uploader event listener.
-      document
-        .getElementById("romUploader")
-        .addEventListener("change", function (event) {
-          let file = event.target.files[0];
-          if (file) {
-            let reader = new FileReader();
-            reader.onload = function (e) {
-              appendLog("ROM Loaded: " + file.name);
-              let romData = new Uint8Array(e.target.result);
-              // Allocate a persistent ROM buffer if not already done.
-              if (!window.romBuffer) {
-                window.romBuffer = Module._malloc(4096); // 4KB
-              }
-              Module.HEAPU8.set(romData, window.romBuffer);
-              Module._loadROM(window.romBuffer, romData.length);
-            };
-            reader.readAsArrayBuffer(file);
-          }
-        });
+      document.getElementById("romUploader").addEventListener("change", function (event) {
+        let file = event.target.files[0];
+        if (file) {
+          let reader = new FileReader();
+          reader.onload = function (e) {
+            appendLog("ROM Loaded: " + file.name);
+            let romData = new Uint8Array(e.target.result);
+            if (!window.romBuffer) {
+              window.romBuffer = Module._malloc(4096);
+            }
+            Module.HEAPU8.set(romData, window.romBuffer);
+            Module._loadROM(window.romBuffer, romData.length);
+          };
+          reader.readAsArrayBuffer(file);
+        }
+      });
 
       async function loadIBMLogo() {
         try {
@@ -313,9 +313,7 @@
 
       async function loadZeroDemo() {
         try {
-          const response = await fetch(
-            "roms/Zero Demo [zeroZshadow, 2007].ch8"
-          );
+          const response = await fetch("roms/Zero Demo [zeroZshadow, 2007].ch8");
           const arrayBuffer = await response.arrayBuffer();
           const romData = new Uint8Array(arrayBuffer);
           if (!window.romBuffer) {
@@ -329,6 +327,24 @@
           appendLog("Error loading Zero Demo ROM: " + error);
         }
       }
+
+      async function loadTrip8Demo() {
+        try {
+          const response = await fetch("roms/Trip8 Demo (2008) [Revival Studios].ch8");
+          const arrayBuffer = await response.arrayBuffer();
+          const romData = new Uint8Array(arrayBuffer);
+          if (!window.romBuffer) {
+            window.romBuffer = Module._malloc(4096);
+          }
+          Module.HEAPU8.set(romData, window.romBuffer);
+          Module._loadROM(window.romBuffer, romData.length);
+          appendLog("Trip8 Demo ROM loaded successfully");
+        } catch (error) {
+          console.error("Error loading Trip8 Demo ROM:", error);
+          appendLog("Error loading Trip8 Demo ROM: " + error);
+        }
+      }
+
     </script>
   </body>
 </html>
